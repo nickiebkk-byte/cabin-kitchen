@@ -31,7 +31,6 @@
 *,*::before,*::after{box-sizing:border-box}
 html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 [hidden]{display:none!important}
-html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5;margin:0;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px;
   display:flex;flex-direction:column;gap:12px}
@@ -44,11 +43,11 @@ img{max-width:100%}
 .top h1{margin:0;font-family:var(--f-display);font-size:22px;font-weight:700;color:var(--navy);letter-spacing:.01em}
 .top p{margin:0;color:var(--muted);font-size:13px}
 
-.app{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px}
+.app{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px;align-items:start}
 
 /* ---------- stage ---------- */
 .stagewrap{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
-.stage{position:relative;flex:1;min-height:320px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#E9E6E1}
+.stage{position:relative;flex:none;height:calc((100vh - 167px) * 1.25);min-height:420px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#E9E6E1}
 .scene{position:absolute;left:0;top:0;transform-origin:0 0}
 .scene .wall,.scene .floor,.scene .splash,.scene .body,.scene .slab,.scene .plinth,.scene .open,.scene .it,.scene .deco{position:absolute}
 .scene .floor{background:linear-gradient(#B9AE9F,#A99D8D)}
@@ -79,7 +78,7 @@ img{max-width:100%}
 .ib.del{color:#B23A2A}
 
 /* ---------- panel ---------- */
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;min-height:0;overflow:auto;display:flex;flex-direction:column}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;min-height:0;max-height:calc((100vh - 167px) * 1.25 + 130px);overflow:auto;position:sticky;top:12px;display:flex;flex-direction:column}
 .tabs{display:flex;position:sticky;top:0;background:var(--panel);z-index:2;border-bottom:1px solid var(--line)}
 .tabs button{flex:1;border:0;background:transparent;padding:12px 4px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent}
 .tabs button[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--orange);font-weight:600}
@@ -202,11 +201,11 @@ textarea.fallback{width:100%;min-height:120px;font:12px var(--f-mono);border:1px
   .selbar .ib{padding:5px 9px;font-size:12px}
   .dims{font-size:10px}
   html,body{height:auto}
-  .app{display:flex;flex-direction:column;flex:none}
+  .app{display:flex;flex-direction:column;flex:none;align-items:stretch}
   .stagewrap{flex:none}
   .stagewrap{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;background:var(--bg);padding-bottom:6px}
-  .stage{flex:none;height:min(44vh,330px);min-height:220px}
-  .panel{overflow:visible}
+  .stage{flex:none;height:min(55vh,412px);min-height:275px}
+  .panel{overflow:visible;max-height:none;position:static}
   .tabs{position:static}
   body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 }
