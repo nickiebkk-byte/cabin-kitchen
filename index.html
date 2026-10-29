@@ -1,0 +1,993 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>แต่งครัวปูน CABIN</title>
+<meta name="description" content="ลองแต่งครัวเคาน์เตอร์ปูนด้วยบานและตู้แขวน CABIN 9 ซีรีส์ วางได้อิสระ ดู 3D และบันทึกแผนครัวพร้อมรายการสินค้าเป็น PNG หรือ PDF">
+<meta name="theme-color" content="#14324D">
+<meta property="og:title" content="แต่งครัวปูน CABIN">
+<meta property="og:description" content="ลองแต่งครัวเคาน์เตอร์ปูน วางบานและตู้แขวนได้อิสระ ดู 3D และบันทึกรายการสินค้า">
+<meta property="og:image" content="img/room-juno.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314324D'/%3E%3Crect x='12' y='14' width='40' height='14' rx='2' fill='%23D2702A'/%3E%3Crect x='10' y='34' width='44' height='4' fill='%23fff'/%3E%3Crect x='14' y='38' width='16' height='16' rx='2' fill='%23fff'/%3E%3Crect x='34' y='38' width='16' height='16' rx='2' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: kitchen elevation (the product) on the left, a picking panel on the right; on phones the elevation sticks to the top while the panel scrolls below. */
+:root{
+  --bg:#EEF0F2; --panel:#FFFFFF; --line:#D7DCE1; --ink:#14263A; --muted:#5E6B78;
+  --navy:#14324D; --navy-ink:#FFFFFF; --orange:#D2702A; --soft:#E4EBF2;
+  --f-display:'Anuphan','IBM Plex Sans Thai',system-ui,sans-serif;
+  --f-body:'IBM Plex Sans Thai','Noto Sans Thai',system-ui,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F161D; --panel:#17212B; --line:#2A3846; --ink:#E6EDF3; --muted:#98A7B5;
+  --navy:#8EB8E0; --navy-ink:#0F161D; --orange:#F0995A; --soft:#1F2E3C; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0F161D; --panel:#17212B; --line:#2A3846; --ink:#E6EDF3; --muted:#98A7B5;
+  --navy:#8EB8E0; --navy-ink:#0F161D; --orange:#F0995A; --soft:#1F2E3C; color-scheme:dark }
+
+*,*::before,*::after{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px;
+  display:flex;flex-direction:column;gap:12px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+img{max-width:100%}
+
+.top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.top .eyebrow{font-size:11px;letter-spacing:.14em;color:var(--orange);text-transform:uppercase;font-weight:600}
+.top h1{margin:0;font-family:var(--f-display);font-size:22px;font-weight:700;color:var(--navy);letter-spacing:.01em}
+.top p{margin:0;color:var(--muted);font-size:13px}
+
+.app{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px}
+
+/* ---------- stage ---------- */
+.stagewrap{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
+.stage{position:relative;flex:1;min-height:320px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#E9E6E1}
+.scene{position:absolute;left:0;top:0;transform-origin:0 0}
+.scene .wall,.scene .floor,.scene .splash,.scene .body,.scene .slab,.scene .plinth,.scene .open,.scene .it,.scene .deco{position:absolute}
+.scene .floor{background:linear-gradient(#B9AE9F,#A99D8D)}
+.it{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.it img{width:100%;height:100%;object-fit:fill;pointer-events:none;-webkit-user-drag:none;display:block}
+.it.up{box-shadow:0 8px 14px -6px rgba(0,0,0,.28)}
+.it.lo{box-shadow:0 1px 3px rgba(0,0,0,.22)}
+.it.hood{box-shadow:none}
+.it.sel{outline:calc(3px / var(--k,1)) solid #D2702A;outline-offset:calc(2px / var(--k,1));border-radius:2px}
+.it.drag{cursor:grabbing;z-index:5;opacity:.92}
+.open{background:#3B3936;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)}
+.hood{display:flex;flex-direction:column;align-items:center}
+.hood .ch{background:linear-gradient(90deg,#9EA3A7,#D5D8DA 45%,#A3A8AC);flex:1}
+.hood .ca{background:linear-gradient(#D7DADC,#A5AAAE);clip-path:polygon(18% 0,82% 0,100% 100%,0 100%)}
+.hood .tag{position:absolute;left:50%;top:6px;transform:translateX(-50%);font:600 10px var(--f-body);color:#5D6368;background:rgba(255,255,255,.75);padding:1px 6px;border-radius:8px;white-space:nowrap}
+.guide{position:absolute;inset:auto 0 0 0;display:flex;justify-content:center;pointer-events:none}
+.empty-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#4C5258;font-size:14px;pointer-events:none;padding:20px}
+.dims{position:absolute;right:10px;bottom:10px;font:500 11px var(--f-mono);color:#3E444A;background:rgba(255,255,255,.8);padding:3px 8px;border-radius:6px;font-variant-numeric:tabular-nums}
+
+.selbar{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-height:54px}
+.selbar img{width:40px;height:40px;object-fit:contain}
+.selbar .txt{flex:1;min-width:0}
+.selbar .nm{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.selbar .mt{font:500 11px var(--f-mono);color:var(--muted)}
+.selbar .hint{color:var(--muted);font-size:13px}
+.ib{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 11px;font-size:13px;white-space:nowrap}
+.ib:hover{border-color:var(--navy)}
+.ib.del{color:#B23A2A}
+
+/* ---------- panel ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;min-height:0;overflow:auto;display:flex;flex-direction:column}
+.tabs{display:flex;position:sticky;top:0;background:var(--panel);z-index:2;border-bottom:1px solid var(--line)}
+.tabs button{flex:1;border:0;background:transparent;padding:12px 4px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent}
+.tabs button[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--orange);font-weight:600}
+.tabs .count{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:var(--orange);color:#fff;font:600 11px/18px var(--f-mono)}
+.tp{padding:14px;display:flex;flex-direction:column;gap:14px}
+.h3{margin:0;font-family:var(--f-display);font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.03em}
+.note{font-size:12px;color:var(--muted);margin:0}
+
+.series{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sc{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg);text-align:left;padding:0}
+.sc img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover}
+.sc .lab{display:flex;align-items:center;gap:7px;padding:7px 9px}
+.sc .dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.2);flex:none}
+.sc .nm{font-weight:600;font-size:12.5px;line-height:1.2}
+.sc .mt{font-size:11px;color:var(--muted)}
+.sc[aria-pressed="true"]{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange)}
+
+.cur{display:flex;gap:12px;align-items:center}
+.cur img{width:110px;border-radius:8px;aspect-ratio:3/2;object-fit:cover}
+.cur .nm{font-family:var(--f-display);font-weight:700;font-size:18px;color:var(--navy);line-height:1.2}
+.cur .mt{font-size:12px;color:var(--muted)}
+.chip{display:inline-block;font:600 10.5px var(--f-mono);letter-spacing:.06em;padding:2px 7px;border-radius:5px;background:var(--soft);color:var(--navy)}
+
+.tray{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}
+.ti{display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:8px;border:1px solid var(--line);border-radius:9px;background:var(--bg);text-align:left}
+.ti:hover{border-color:var(--navy)}
+.ti .ph{height:70px;display:flex;align-items:center;justify-content:center;background:#F4F4F2;border-radius:6px}
+.ti .ph img{max-height:62px;max-width:88%;object-fit:contain}
+.ti .nm{font-size:12.5px;font-weight:600;line-height:1.25}
+.ti .mt{font:500 10.5px var(--f-mono);color:var(--muted)}
+.ti .plus{align-self:flex-start;font-size:11px;color:var(--orange);font-weight:600}
+
+.presets{display:flex;gap:8px;flex-wrap:wrap}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{display:flex;align-items:center;gap:7px;padding:5px 10px 5px 5px;border:1px solid var(--line);border-radius:20px;background:var(--bg);font-size:12.5px}
+.opt i{width:22px;height:22px;border-radius:50%;display:block;border:1px solid rgba(0,0,0,.15)}
+.opt[aria-pressed="true"]{border-color:var(--orange);box-shadow:0 0 0 1px var(--orange)}
+
+.list{display:flex;flex-direction:column}
+.li{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.li img{width:44px;height:44px;object-fit:contain;background:#F4F4F2;border-radius:6px}
+.li .nm{font-weight:600;font-size:13px}
+.li .mt{font:500 11px var(--f-mono);color:var(--muted)}
+.li .q{font:600 15px var(--f-mono);font-variant-numeric:tabular-nums}
+.copy{display:flex;flex-direction:column;gap:8px}
+.cta{border:0;background:var(--navy);color:var(--navy-ink);border-radius:10px;padding:12px;font-weight:600;font-size:14px}
+.ghost{border:1px solid var(--line);background:transparent;border-radius:10px;padding:10px;font-size:13px}
+.ghost.warn{color:#B23A2A}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);padding:8px 16px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20;max-width:90vw;text-align:center}
+.toast.on{opacity:1}
+textarea.fallback{width:100%;min-height:120px;font:12px var(--f-mono);border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);color:var(--ink)}
+
+
+.selbar{flex-wrap:wrap}
+.selbar .btnrow{display:flex;gap:6px;flex-wrap:wrap}
+.guide-v,.guide-h{position:absolute;background:#D2702A;pointer-events:none;z-index:6}
+.walledge{position:absolute;top:0;width:2px;background:rgba(0,0,0,.08)}
+.it.over{outline:2px dashed #B23A2A;outline-offset:1px}
+.colrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sw{width:34px;height:34px;border-radius:50%;border:1px solid rgba(0,0,0,.18);padding:0}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--orange)}
+.picker{position:relative;width:34px;height:34px;border-radius:50%;overflow:hidden;border:1px dashed var(--muted);display:inline-flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted)}
+.picker input{position:absolute;inset:-6px;width:calc(100% + 12px);height:calc(100% + 12px);opacity:0;cursor:pointer}
+.picker.on{border-style:solid;border-color:var(--orange)}
+.range{display:flex;align-items:center;gap:10px}
+.range input{flex:1}
+.range output{font:600 13px var(--f-mono);min-width:64px;text-align:right;font-variant-numeric:tabular-nums}
+.colhead{display:flex;justify-content:space-between;align-items:baseline}
+.colhead span{font:500 11px var(--f-mono);color:var(--muted)}
+
+
+.view3d{position:absolute;inset:0}
+.view3d canvas{display:block;touch-action:none}
+.modes{position:absolute;left:10px;top:10px;display:flex;background:rgba(255,255,255,.88);border-radius:8px;padding:3px;gap:2px;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.modes button{border:0;background:transparent;padding:5px 12px;border-radius:6px;font-size:12.5px;font-weight:600;color:#3E444A}
+.modes button[aria-pressed="true"]{background:#14324D;color:#fff}
+.loading3d{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(240,238,234,.75);color:#3E444A;font-size:14px}
+.it.fx{box-shadow:none}
+.fx-tap{position:absolute;left:calc(50% - 2px);bottom:0;width:4px;height:94%;background:linear-gradient(90deg,#9aa0a4,#e6e8ea,#9aa0a4);border-radius:2px}
+.fx-spout{position:absolute;left:calc(50% - 2px);top:0;width:18px;height:4px;background:#C9CDD0;border-radius:2px}
+.fx-rim{position:absolute;left:8%;bottom:0;width:84%;height:1.6px;background:#AEB3B7}
+.fx-glass{position:absolute;left:0;bottom:0;width:100%;height:2.4px;background:#151617;border-radius:1px}
+.fx-pot{position:absolute;bottom:2.4px;width:30%;height:12px;background:linear-gradient(#64686c,#3a3c3f);border-radius:2px 2px 4px 4px}
+.fx-pot.sm{width:20%;height:7px}
+
+.expseg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.expseg button{flex:1;border:0;background:var(--bg);padding:9px 6px;font-size:13px}
+.expseg button+button{border-left:1px solid var(--line)}
+.expseg button[aria-pressed="true"]{background:var(--navy);color:var(--navy-ink);font-weight:600}
+.exp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cta:disabled{opacity:.6;cursor:progress}
+.modal{position:fixed;inset:0;background:rgba(10,16,22,.6);z-index:30;display:flex;align-items:center;justify-content:center;padding:20px max(16px,env(safe-area-inset-left,0px))}
+.mbox{background:var(--panel);border-radius:12px;padding:14px;max-width:min(1000px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.mbox img{width:100%;border:1px solid var(--line);border-radius:6px}
+.mhead{display:flex;justify-content:space-between;align-items:center}
+@media (max-width:900px){
+  .selbar .ib{padding:5px 9px;font-size:12px}
+  .dims{font-size:10px}
+  html,body{height:auto}
+  .app{display:flex;flex-direction:column;flex:none}
+  .stagewrap{flex:none}
+  .stagewrap{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;background:var(--bg);padding-bottom:6px}
+  .stage{flex:none;height:min(44vh,330px);min-height:220px}
+  .panel{overflow:visible}
+  .tabs{position:static}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <div class="eyebrow">Kitchen idea · เคาน์เตอร์ปูน</div>
+    <h1>แต่งครัวปูน CABIN</h1>
+  </div>
+  <p>เลือกซีรีส์ วางตู้ บาน ซิงก์ และเตาได้อิสระ กำหนดความยาวครัว เปลี่ยนสี แล้วกด 3D เพื่อหมุนดูรอบห้อง</p>
+</header>
+
+<main class="app">
+  <section class="stagewrap">
+    <div class="stage" id="stage">
+      <div class="scene" id="scene"></div>
+      <div class="view3d" id="view3d" hidden></div>
+      <div class="dims" id="dims"></div>
+      <div class="modes" role="group" aria-label="มุมมอง"><button type="button" id="m2d" aria-pressed="true">หน้าตรง</button><button type="button" id="m3d" aria-pressed="false">3D</button></div>
+      <div class="loading3d" id="loading3d" hidden>กำลังเตรียมภาพ 3D…</div>
+    </div>
+    <div class="selbar" id="selbar"></div>
+  </section>
+
+  <aside class="panel">
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-series" aria-selected="true">ซีรีส์</button>
+      <button role="tab" id="tab-add" aria-selected="false">เพิ่มชิ้น</button>
+      <button role="tab" id="tab-color" aria-selected="false">ห้องและสี</button>
+      <button role="tab" id="tab-list" aria-selected="false">รายการ<span class="count" id="cnt">0</span></button>
+    </div>
+
+    <div class="tp" id="p-series">
+      <div class="cur" id="cur"></div>
+      <div class="h3">เปลี่ยนซีรีส์ทั้งครัว</div>
+      <div class="series" id="seriesGrid"></div>
+      <p class="note">สีหน้าบานและตู้มาจากสินค้าจริงของแต่ละซีรีส์ เปลี่ยนซีรีส์แล้วทุกชิ้นจะเปลี่ยนเป็นชิ้นประเภทเดียวกันของซีรีส์ใหม่ในตำแหน่งเดิม ชิ้นที่ซีรีส์ใหม่ไม่มีจะถูกนำออก</p>
+    </div>
+
+    <div class="tp" id="p-add" hidden>
+      <div>
+        <div class="h3">เริ่มจากแบบตัวอย่าง</div>
+        <div class="presets" id="presets" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="h3">ตู้แขวนและกล่องแขวน</div>
+        <div class="tray" id="trayUp" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="h3">บานและตู้ใต้เคาน์เตอร์ปูน</div>
+        <div class="tray" id="trayLo" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="h3">ซิงก์และเตาบนท็อป</div>
+        <div class="tray" id="trayF" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="h3">เว้นที่สำหรับเครื่องดูดควัน</div>
+        <div class="tray" id="trayX" style="margin-top:8px"></div>
+      </div>
+      <p class="note">วางแล้วลากได้อิสระทั้งซ้ายขวาและขึ้นลง ใกล้แนวเคาน์เตอร์ แนวตู้แขวน หรือขอบชิ้นข้างๆ จะดูดเข้าแนวให้เอง</p>
+    </div>
+
+    <div class="tp" id="p-color" hidden>
+      <div>
+        <div class="h3">ความยาวผนัง</div>
+        <div class="range" style="margin-top:8px"><input type="range" id="wallW" min="180" max="600" step="10" aria-label="ความยาวผนัง"><output id="wallWOut"></output></div>
+      </div>
+      <div>
+        <div class="h3">ความยาวเคาน์เตอร์ปูน</div>
+        <div class="range" style="margin-top:8px"><input type="range" id="cntW" min="0" max="600" step="5" aria-label="ความยาวเคาน์เตอร์"><output id="cntWOut"></output></div>
+        <div class="h3" style="margin-top:12px">ระยะจากผนังซ้าย</div>
+        <div class="range" style="margin-top:8px"><input type="range" id="cntX" min="0" max="600" step="5" aria-label="ระยะเคาน์เตอร์จากผนังซ้าย"><output id="cntXOut"></output></div>
+        <div class="presets" style="margin-top:10px">
+          <button class="ib" type="button" id="cL">ชิดซ้าย</button><button class="ib" type="button" id="cM">กึ่งกลาง</button><button class="ib" type="button" id="cR">ชิดขวา</button><button class="ib" type="button" id="cFit">พอดีกับบานที่วาง</button><button class="ib" type="button" id="cFull">เต็มผนัง</button>
+        </div>
+      </div>
+      <div>
+        <div class="colhead"><div class="h3">สีผนัง</div><span id="wallHex"></span></div>
+        <div class="colrow" id="colWall" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="colhead"><div class="h3">สีตัวเคาน์เตอร์ปูน</div><span id="bodyHex"></span></div>
+        <div class="colrow" id="colBody" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="colhead"><div class="h3">สีท็อปเคาน์เตอร์</div><span id="topHex"></span></div>
+        <div class="colrow" id="colTop" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="colhead"><div class="h3">สีพื้น</div><span id="floorHex"></span></div>
+        <div class="colrow" id="colFloor" style="margin-top:8px"></div>
+      </div>
+      <p class="note">วงกลมเส้นประคือเลือกสีเองได้ทุกสี สีบนจอเป็นการจำลอง อาจต่างจากสีทาหรือกระเบื้องจริง</p>
+    </div>
+
+    <div class="tp" id="p-list" hidden>
+      <div class="list" id="list"></div>
+      <div class="copy">
+        <div class="h3">ภาพในไฟล์ที่ส่งออก</div>
+        <div class="expseg" role="group" aria-label="ภาพในไฟล์ที่ส่งออก">
+          <button type="button" data-v="2d">หน้าตรง 2D</button><button type="button" data-v="3d">3D</button><button type="button" data-v="both">ทั้งสองแบบ</button>
+        </div>
+        <div class="exp" id="expRow">
+          <button class="cta" type="button" id="pngBtn">บันทึกเป็นภาพ PNG</button>
+          <button class="cta" type="button" id="pdfBtn">บันทึกเป็น PDF</button>
+        </div>
+        <p class="note" id="expNote">ไฟล์มีภาพครัวตามที่เลือก ขนาดผนังและเคาน์เตอร์ สีที่เลือก และตารางรายการสินค้าพร้อมจำนวน ภาพ 3D ใช้มุมกล้องล่าสุดที่หมุนไว้</p>
+        <button class="ghost" type="button" id="copyBtn">คัดลอกรายการเป็นข้อความ</button>
+        <textarea class="fallback" id="fallback" readonly hidden></textarea>
+        <p class="note">ขนาดและรหัสสินค้าตามป้ายหน้าร้าน ภาพเป็นการจำลองเพื่อดูไอเดีย ขนาดช่องเคาน์เตอร์จริงและราคา สอบถามพนักงานได้</p>
+        <button class="ghost warn" type="button" id="clearBtn">ล้างครัวทั้งหมด</button>
+      </div>
+    </div>
+  </aside>
+</main>
+<div class="toast" id="toast" role="status"></div>
+<div class="modal" id="pv" hidden><div class="mbox"><div class="mhead"><b>ภาพแผนครัว</b><button class="ib" type="button" id="pvX">ปิด</button></div><p class="note">กดค้างที่ภาพ (มือถือ) หรือคลิกขวา (คอมพิวเตอร์) แล้วเลือกบันทึกภาพ</p><img id="pvImg" alt="แผนครัวพร้อมรายการสินค้า"></div></div>
+
+<script>
+const ITEMS={"1103385":{"n":"กล่องแขวน","t":"box","w":35.0,"h":66.0,"sz":"35×34×66","up":true},"1103307":{"n":"ตู้แขวนคู่","t":"wall2","w":86.0,"h":66.0,"sz":"86×34×66","up":true},"1103392":{"n":"บานซิงค์คู่","t":"door2","w":84.0,"h":64.0,"sz":"84×64","up":false},"1103267":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":46.0,"h":66.0,"sz":"46×34×66","up":true},"1103308":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.0,"h":64.0,"sz":"44×64","up":false},"1103287":{"n":"ตู้แขวนคู่","t":"wall2","w":86.0,"h":41.0,"sz":"86×34×41","up":true},"1103358":{"n":"บานถังแก๊ส","t":"gas","w":49.5,"h":75.0,"sz":"49.5×75","up":false},"1103402":{"n":"ตู้ลิ้นชัก","t":"drawer","w":45.5,"h":65.5,"sz":"45.5×50×65.5","up":false},"1155385":{"n":"กล่องแขวน","t":"box","w":88.0,"h":25,"sz":"88×25×33.5","up":true},"1155424":{"n":"กล่องแขวน","t":"box","w":29.0,"h":67.5,"sz":"29×33.5×67.5","up":true},"1092601":{"n":"ตู้ลิ้นชัก","t":"drawer","w":46.0,"h":66.0,"sz":"46×48×66","up":false},"1104573":{"n":"ตู้แขวนคู่","t":"wall2","w":87.5,"h":67.5,"sz":"87.5×33.5×67.5","up":true},"1104644":{"n":"บานซิงค์คู่","t":"door2","w":84.0,"h":64.0,"sz":"84×64","up":false},"1104691":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":48.0,"h":67.5,"sz":"48×33.5×67.5","up":true},"1104520":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.0,"h":64.0,"sz":"44×64","up":false},"1104530":{"n":"บานถังแก๊ส","t":"gas","w":49.5,"h":75.0,"sz":"49.5×75","up":false},"1254232":{"n":"ตู้แขวนคู่","t":"wall2","w":80.0,"h":60.0,"sz":"80×35×60","up":true},"1254216":{"n":"บานซิงค์คู่","t":"door2","w":84.5,"h":64.5,"sz":"84.5×64.5","up":false},"1254226":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":40.0,"h":60.0,"sz":"40×35×60","up":true},"1254202":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.5,"h":64.5,"sz":"44.5×64.5","up":false},"1254225":{"n":"บานถังแก๊ส","t":"gas","w":54.0,"h":74.0,"sz":"54×74","up":false},"1254173":{"n":"ตู้ลิ้นชัก","t":"drawer","w":44.0,"h":64.0,"sz":"44×42.5×64","up":false},"1254749":{"n":"กล่องแขวน","t":"box","w":80.0,"h":35.0,"sz":"80×35×35","up":true},"1254169":{"n":"กล่องแขวน","t":"box","w":80.0,"h":25.0,"sz":"80×33×25","up":true},"1271715":{"n":"ตู้แขวนคู่","t":"wall2","w":88.0,"h":67.5,"sz":"88×33.7×67.5","up":true},"1270826":{"n":"บานซิงค์คู่","t":"door2","w":84.0,"h":64.0,"sz":"84×64","up":false},"1272842":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":48.0,"h":67.5,"sz":"48×33.8×67.5","up":true},"1270827":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.3,"h":64.0,"sz":"44.3×64","up":false},"1271716":{"n":"บานถังแก๊ส","t":"gas","w":49.8,"h":75.0,"sz":"49.8×75","up":false},"1297766":{"n":"ตู้แขวนคู่","t":"wall2","w":87.8,"h":67.5,"sz":"87.8×33.8×67.5","up":true},"1297767":{"n":"บานซิงค์คู่","t":"door2","w":84.0,"h":64.0,"sz":"84×64","up":false},"1297782":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":48.0,"h":67.5,"sz":"48×33.8×67.5","up":true},"1297791":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.0,"h":64.0,"sz":"44×64","up":false},"1297771":{"n":"บานถังแก๊ส","t":"gas","w":49.5,"h":75.0,"sz":"49.5×75","up":false},"1297720":{"n":"ตู้ลิ้นชัก","t":"drawer","w":45.5,"h":65.5,"sz":"45.5×50.5×65.5","up":false},"1233339":{"n":"ตู้แขวนคู่","t":"wall2","w":90.0,"h":67.8,"sz":"90×34×67.8","up":true},"1233324":{"n":"บานซิงค์คู่","t":"door2","w":96.0,"h":68.8,"sz":"96×68.8","up":false},"1233356":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":45.0,"h":67.8,"sz":"45×34×67.8","up":true},"1233125":{"n":"บานซิงค์เดี่ยว","t":"door1","w":50.8,"h":68.8,"sz":"50.8×68.8","up":false},"1233333":{"n":"ตู้ไมโครเวฟ","t":"micro","w":60.0,"h":42.0,"sz":"60×42×42","up":true},"1233343":{"n":"บานถังแก๊ส","t":"gas","w":46.0,"h":66.0,"sz":"46×48×66","up":false},"1233386":{"n":"ตู้ลิ้นชัก","t":"drawer","w":49.0,"h":68.8,"sz":"49×54.5×68.8","up":false},"1268619":{"n":"บานซิงค์คู่","t":"door2","w":96.0,"h":68.8,"sz":"96×68.8","up":false},"1160369":{"n":"ตู้แขวนคู่","t":"wall2","w":91.0,"h":70.0,"sz":"91×36×70","up":true},"1159829":{"n":"บานซิงค์คู่","t":"door2","w":96.0,"h":68.8,"sz":"96×68.8","up":false},"1160416":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":45.8,"h":69.0,"sz":"45.8×35.5×69","up":true},"1160011":{"n":"บานซิงค์เดี่ยว","t":"door1","w":50.8,"h":68.8,"sz":"50.8×68.8","up":false},"1160136":{"n":"ตู้แขวนคู่","t":"wall2","w":90.0,"h":94.0,"sz":"90×34×94","up":true},"1160138":{"n":"ตู้แขวนเสริม","t":"box","w":90.0,"h":42.0,"sz":"90×30×42","up":true},"1159897":{"n":"บานถังแก๊ส","t":"gas","w":50.8,"h":73.6,"sz":"50.8×73.6","up":false},"1160386":{"n":"ตู้ลิ้นชัก","t":"drawer","w":49.0,"h":68.8,"sz":"49×54.5×68.8","up":false},"1160456":{"n":"กล่องจบมุม","t":"box","w":32.0,"h":67.8,"sz":"32×34.5×67.8","up":true},"1159880":{"n":"บานคู่ใต้เตา","t":"door2","w":81.6,"h":61.8,"sz":"81.6×61.8","up":false},"1160339":{"n":"ตู้ไมโครเวฟ","t":"micro","w":60.0,"h":42.0,"sz":"60×34×42","up":true},"1160002":{"n":"บานเดี่ยวใต้เตา","t":"door1","w":43.8,"h":61.8,"sz":"43.8×61.8","up":false},"1160501":{"n":"กล่องแขวน","t":"box","w":60.0,"h":26.0,"sz":"60×34×26","up":true},"1160600":{"n":"กล่องแขวน","t":"box","w":90.0,"h":26.0,"sz":"90×34×26","up":true},"1160338":{"n":"กล่องแขวน","t":"box","w":25.0,"h":67.8,"sz":"25×34×67.8","up":true},"1189321":{"n":"ตู้ลิ้นชัก","t":"drawer","w":54.4,"h":68.0,"sz":"54.4×49×68","up":false},"1281473":{"n":"ตู้แขวนคู่","t":"wall2","w":80.0,"h":60.0,"sz":"80×31.9×60","up":true},"1281404":{"n":"บานซิงค์คู่","t":"door2","w":86.0,"h":66.0,"sz":"86×66","up":false},"1281431":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":40.0,"h":60.0,"sz":"40×31.9×60","up":true},"1281450":{"n":"บานซิงค์เดี่ยว","t":"door1","w":46.0,"h":66.0,"sz":"46×66","up":false},"1281419":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":60.0,"h":60.0,"sz":"60×31.9×60","up":true},"1281442":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":60.0,"h":60.0,"sz":"60×31.95×60","up":true},"1281406":{"n":"บานถังแก๊ส","t":"gas","w":56.0,"h":74.0,"sz":"56×74","up":false},"1281373":{"n":"ตู้ลิ้นชัก","t":"drawer","w":46.0,"h":66.0,"sz":"46×55.5×66","up":false},"1221091":{"n":"ตู้แขวนคู่","t":"wall2","w":80.0,"h":60.0,"sz":"80×34.5×60","up":true},"1210321":{"n":"บานซิงค์คู่","t":"door2","w":86.0,"h":66.0,"sz":"86×66","up":false},"1221020":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":40.0,"h":60.0,"sz":"40×34.5×60","up":true},"1210332":{"n":"บานซิงค์เดี่ยว","t":"door1","w":46.0,"h":66.0,"sz":"46×66","up":false},"1221084":{"n":"ตู้แขวนคู่","t":"wall2","w":80.0,"h":40.0,"sz":"80×34.5×40","up":true},"1221417":{"n":"กล่องแขวน","t":"box","w":30.0,"h":60.0,"sz":"30×30×60","up":true},"1209865":{"n":"บานถังแก๊ส","t":"gas","w":56.0,"h":74.0,"sz":"56×74","up":false},"1266448":{"n":"ตู้ลิ้นชัก","t":"drawer","w":46.0,"h":66.0,"sz":"46×55.5×66","up":false}};
+const SERIES=[{"id":"chic","name":"CHIC","mat":"UPVC","col":"#8B8781","tone":"ลายไม้เทา ขอบดำ","room":"img/room-chic.jpg","arts":["1103385","1103307","1103392","1103267","1103308","1103287","1103358","1103402"]},{"id":"g6","name":"G6","mat":"PP","col":"#F3F2EE","tone":"ขาว","room":"img/room-g6.jpg","arts":["1155385","1155424","1092601","1104573","1104644","1104691","1104520","1104530"]},{"id":"juno","name":"JUNO","mat":"UPVC","col":"#C8A57D","tone":"ลายไม้โอ๊กอ่อน","room":"img/room-juno.jpg","arts":["1254232","1254216","1254226","1254202","1254225","1254173","1254749","1254169"]},{"id":"henley","name":"HENLEY","mat":"PP","col":"#F6F6F4","tone":"ขาว","room":"img/room-henley.jpg","arts":["1271715","1270826","1272842","1270827","1271716","1092601","1155385","1155424"]},{"id":"hollyn","name":"HOLLYN","mat":"ABS","col":"#D5CBB3","tone":"ครีมเบจ","room":"img/room-hollyn.jpg","arts":["1297766","1297767","1297782","1297791","1297771","1297720"]},{"id":"pearl-pistachio","name":"PEARL PISTACHIO","mat":"HIPS","col":"#8FAD89","tone":"เขียวพิสตาชิโอ","room":"img/room-pearl-pistachio.jpg","arts":["1233339","1233324","1233356","1233125","1233333","1233343","1233386","1268619"]},{"id":"curve-gray","name":"CURVE GRAY","mat":"HIPS","col":"#46484B","tone":"เทาเข้ม ขอบโครเมียม","room":"img/room-curve-gray.jpg","arts":["1160369","1159829","1160416","1160011","1160136","1160138","1159897","1160386","1160456","1159880","1160339","1160002","1160501","1160600","1160338","1189321"]},{"id":"curve-diamond","name":"CURVE DIAMOND","mat":"Honeycomb","col":"#EDEDEB","tone":"ขาวเงา","room":"img/room-curve-diamond.jpg","arts":["1281473","1281404","1281431","1281450","1281419","1281442","1281406","1281373"]},{"id":"lucida-dark-oak","name":"LUCIDA DARK OAK","mat":"MDF","col":"#202020","tone":"ดำลายไม้","room":"img/room-lucida-dark-oak.jpg","arts":["1221091","1210321","1221020","1210332","1221084","1221417","1209865","1266448"]}];
+
+(function(){
+const $=id=>document.getElementById(id);
+const SMAP={}; SERIES.forEach(s=>SMAP[s.id]=s);
+const HOODS={HOOD60:{n:'ช่องเครื่องดูดควัน',t:'hood',w:60,h:65,up:true,sz:'60'},HOOD90:{n:'ช่องเครื่องดูดควัน',t:'hood',w:90,h:65,up:true,sz:'90'}};
+const FIX={SINK:{n:'ซิงก์ล้างจาน',t:'sink',w:78,h:32,fx:true,sz:'78'},HOB:{n:'เตาแก๊ส 2 หัว',t:'hob',w:72,h:16,fx:true,sz:'72'}};
+const item=a=>ITEMS[a]||HOODS[a]||FIX[a];
+const img=a=>'img/'+a+'.webp';
+const PAL={
+  wall:['#EFEDE8','#F7F4EC','#D9D6CF','#C9CBCC','#C0C8B9','#C9D6DD','#E6D3C0','#3E4246'],
+  body:['#ECEAE6','#F7F7F5','#BDBAB4','#97958F','#7E8287','#C7B9A6','#5A5D61','#2F3134'],
+  top:['#1F2022','#F2F1EE','#8E9093','#B88A5C','#6B4A2E','#D9D2C5','#3B4A42'],
+  floor:['#B3A898','#D8CFC1','#8E8478','#6F6A63','#C9C4BC','#A07D5A']
+};
+const PRESETS=[
+  {n:'ครัวเล็ก ~1.5 ม.',lo:['door2','gas'],up:['wall2','wall1']},
+  {n:'ครัวมาตรฐาน ~2.4 ม.',lo:['drawer','door2','door1','gas'],up:['wall1','wall2','HOOD60','wall1']},
+  {n:'ครัวยาว ~3.2 ม.',lo:['door1','door2','drawer','gas','door2'],up:['wall1','wall2','box','HOOD90','wall2']}
+];
+const ROWS=['up','lo','fx'];
+const PIL=7, PLINTH=8, TOP=90, SLAB=5, UPTOP=215, WALLH=250, SIDE=25, SNAP=5;
+
+const uid=()=>Math.random().toString(36).slice(2,9);
+const KEY='cabin-kitchen-idea-v4';
+const upY=it=>UPTOP-it.h;           // default bottom of a wall piece
+const homeY=it=>it.up?upY(it):PLINTH;
+
+function pick(seriesId,type,targetW){
+  const arts=SMAP[seriesId].arts.filter(a=>ITEMS[a].t===type);
+  if(!arts.length) return null;
+  if(targetW==null) return arts[0];
+  return arts.slice().sort((a,b)=>Math.abs(ITEMS[a].w-targetW)-Math.abs(ITEMS[b].w-targetW))[0];
+}
+function applyPreset(s,p){
+  const lo=p.lo.map(t=>pick(s.series,t)).filter(Boolean);
+  const up=p.up.map(t=>HOODS[t]?t:pick(s.series,t)).filter(Boolean);
+  const loW=lo.reduce((a,x)=>a+ITEMS[x].w+PIL,PIL), upW=up.reduce((a,x)=>a+item(x).w,0);
+  s.wallW=Math.max(s.wallW||0, Math.ceil((Math.max(loW,upW)+60)/10)*10);
+  const x0=Math.round((s.wallW-loW)/2);
+  let x=x0+PIL; s.lo=lo.map(a=>{ const o={u:uid(),a,x,y:PLINTH}; x+=ITEMS[a].w+PIL; return o; });
+  let ux=x0+PIL/2; s.up=up.map(a=>{ const it=item(a); const o={u:uid(),a,x:ux,y:upY(it)}; ux+=it.w; return o; });
+  s.cx=x0; s.cw=loW;
+  s.fx=[];
+  const sk=s.lo.find(r=>ITEMS[r.a].t==='door2')||s.lo.find(r=>ITEMS[r.a].t==='door1');
+  const hb=s.lo.find(r=>ITEMS[r.a].t==='gas')||s.lo[s.lo.length-1];
+  if(sk) s.fx.push({u:uid(),a:'SINK',x:Math.round(sk.x+ITEMS[sk.a].w/2-FIX.SINK.w/2),y:TOP});
+  if(hb&&hb!==sk) s.fx.push({u:uid(),a:'HOB',x:Math.round(hb.x+ITEMS[hb.a].w/2-FIX.HOB.w/2),y:TOP});
+}
+function defaults(){
+  const s={series:'juno',wallW:300,wallC:PAL.wall[0],bodyC:PAL.body[0],topC:PAL.top[0],floorC:PAL.floor[0],up:[],lo:[]};
+  applyPreset(s,PRESETS[1]); return s;
+}
+let st;
+try{ st=JSON.parse(localStorage.getItem(KEY)); }catch(e){}
+if(!st||!SMAP[st.series]||!Array.isArray(st.up)||!Array.isArray(st.lo)) st=defaults();
+const isHex=v=>/^#[0-9a-f]{6}$/i.test(v||'');
+['wallC','bodyC','topC','floorC'].forEach((k2,i)=>{ if(!isHex(st[k2])) st[k2]=[PAL.wall,PAL.body,PAL.top,PAL.floor][i][0]; });
+st.wallW=Math.min(600,Math.max(180,+st.wallW||300));
+if(!Array.isArray(st.fx)) st.fx=[];
+st.fx=st.fx.filter(r=>FIX[r.a]&&isFinite(r.x));
+if(!isFinite(st.cx)||!isFinite(st.cw)){ st.cx=0; st.cw=0; fitCounter(); }
+st.up=st.up.filter(r=>item(r.a)&&isFinite(r.x)&&isFinite(r.y)); st.lo=st.lo.filter(r=>item(r.a)&&isFinite(r.x)&&isFinite(r.y));
+let sel=null;
+const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} };
+
+/* ---------- colour helpers ---------- */
+function shade(hex,amt){ const n=parseInt(hex.slice(1),16); let r=n>>16,g=n>>8&255,b=n&255;
+  const f=v=>Math.max(0,Math.min(255,Math.round(amt<0?v*(1+amt):v+(255-v)*amt)));
+  return '#'+[f(r),f(g),f(b)].map(v=>v.toString(16).padStart(2,'0')).join(''); }
+function lum(hex){ const n=parseInt(hex.slice(1),16); return (0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255; }
+
+/* ---------- geometry ---------- */
+const all=()=>[...st.lo.map(r=>({r,row:'lo'})),...st.up.map(r=>({r,row:'up'})),...st.fx.map(r=>({r,row:'fx'}))];
+function counterSpan(){ return st.cw>0?{x0:st.cx,x1:st.cx+st.cw,w:st.cw}:null; }
+function fitCounter(){
+  const base=st.lo.filter(r=>r.y<=PLINTH+3);
+  if(!base.length) return false;
+  const x0=Math.min(...base.map(r=>r.x))-PIL, x1=Math.max(...base.map(r=>r.x+item(r.a).w))+PIL;
+  st.cx=Math.max(0,x0); st.cw=Math.min(st.wallW,x1)-st.cx; return true;
+}
+const sceneEl=$('scene'), stage=$('stage');
+let k=1, W=0;
+const Y=cm=>WALLH-cm;
+function render(){
+  W=st.wallW+SIDE*2;
+  const sw=stage.clientWidth, sh=stage.clientHeight;
+  k=Math.min(sw/W, sh/WALLH);
+  const ox=(sw-W*k)/2, oy=(sh-WALLH*k);
+  sceneEl.style.width=W+'px'; sceneEl.style.height=WALLH+'px';
+  sceneEl.style.transform='translate('+ox+'px,'+oy+'px) scale('+k+')';
+  sceneEl.style.setProperty('--k',k);
+  stage.style.background='linear-gradient(90deg,'+shade(st.wallC,-.10)+' 0,'+st.wallC+' 8%,'+st.wallC+' 92%,'+shade(st.wallC,-.10)+' 100%)';
+  const H=[];
+  H.push('<div class="floor" style="left:-600px;width:'+(W+1200)+'px;top:'+(WALLH-6)+'px;height:400px;background:linear-gradient('+st.floorC+','+shade(st.floorC,-.12)+')"></div>');
+  H.push('<div class="walledge" style="left:'+(SIDE-1)+'px;height:'+(WALLH-6)+'px"></div><div class="walledge" style="left:'+(SIDE+st.wallW-1)+'px;height:'+(WALLH-6)+'px"></div>');
+  const cs=counterSpan();
+  if(cs){
+    const L=SIDE+cs.x0;
+    H.push('<div class="body" style="left:'+L+'px;width:'+cs.w+'px;top:'+Y(TOP-SLAB)+'px;height:'+(TOP-SLAB)+'px;background:linear-gradient('+shade(st.bodyC,.04)+','+shade(st.bodyC,-.06)+');box-shadow:0 2px 8px rgba(0,0,0,.25)"></div>');
+    H.push('<div class="slab" style="left:'+(L-2)+'px;width:'+(cs.w+4)+'px;top:'+Y(TOP)+'px;height:'+SLAB+'px;background:linear-gradient('+shade(st.topC,.14)+','+shade(st.topC,-.18)+');box-shadow:0 3px 4px rgba(0,0,0,.25)"></div>');
+    H.push('<div class="plinth" style="left:'+(L+2)+'px;width:'+(cs.w-4)+'px;top:'+Y(PLINTH)+'px;height:'+(PLINTH-1)+'px;background:rgba(0,0,0,.12)"></div>');
+  }
+  const ordered=all().sort((a,b)=>(a.r.u===sel)-(b.r.u===sel));
+  ordered.forEach(({r,row})=>H.push(itemHTML(r,row)));
+  if(!st.lo.length&&!st.up.length) H.push('<div class="empty-hint" style="width:'+W+'px;height:'+WALLH+'px;font-size:'+(15/k)+'px">ผนังยังว่างอยู่<br>แตะ "เพิ่มชิ้น" เพื่อวางตู้แขวนและบานเคาน์เตอร์</div>');
+  sceneEl.innerHTML=H.join('');
+  $('dims').textContent='ผนัง '+st.wallW+' ซม.'+(cs?' · เคาน์เตอร์ ~'+Math.round(cs.w)+' ซม.':'');
+  bindDrag();
+}
+function itemHTML(r,row){
+  const it=item(r.a), x=SIDE+r.x, top=Y(r.y+it.h);
+  const cls='it '+row+(it.t==='hood'?' hood':'')+(r.u===sel?' sel':'');
+  const pos='left:'+x+'px;width:'+it.w+'px;top:'+top+'px;height:'+it.h+'px';
+  if(it.t==='sink') return '<div class="'+cls+'" data-u="'+r.u+'" style="'+pos+'"><div class="fx-tap"></div><div class="fx-spout"></div><div class="fx-rim"></div></div>';
+  if(it.t==='hob') return '<div class="'+cls+'" data-u="'+r.u+'" style="'+pos+'"><div class="fx-pot" style="left:10%"></div><div class="fx-pot sm" style="right:14%"></div><div class="fx-glass"></div></div>';
+  if(it.t==='hood') return '<div class="'+cls+'" data-u="'+r.u+'" style="'+pos+'"><div class="ch" style="width:'+(it.w*0.3)+'px"></div><div class="ca" style="width:'+it.w+'px;height:14px"></div></div>';
+  return '<div class="'+cls+'" data-u="'+r.u+'" style="'+pos+'"><img src="'+img(r.a)+'" alt="'+it.n+'"></div>';
+}
+
+/* ---------- snapping ---------- */
+function snap(r,nx,ny){
+  if(item(r.a).fx){
+    const it=item(r.a); let best=8, x=nx, gx=null;
+    st.lo.forEach(o=>{ const c=o.x+item(o.a).w/2; const cand=c-it.w/2; if(Math.abs(cand-nx)<best){best=Math.abs(cand-nx); x=cand; gx=c;} });
+    const cs=counterSpan(); if(cs){ x=Math.min(cs.x1-it.w-2,Math.max(cs.x0+2,x)); }
+    return {x:Math.round(x),y:TOP,gx,gy:null};
+  }
+  const it=item(r.a), others=all().filter(o=>o.r!==r&&!item(o.r.a).fx).map(o=>({r:o.r,it:item(o.r.a)}));
+  let gx=null, gy=null;
+  // horizontal: my left/right edge to other edges (flush), or a pillar gap for lower pieces
+  let best=SNAP+1;
+  const tryX=(cand,line)=>{ const d=Math.abs(cand-nx); if(d<best){best=d; nx2=cand; gx=line;} };
+  let nx2=nx;
+  const pil=it.up?0:PIL;
+  others.forEach(o=>{
+    const oL=o.r.x, oR=o.r.x+o.it.w, gap=(it.up===o.it.up)?(it.up?0:PIL):0;
+    tryX(oR+gap,oR); tryX(oL-gap-it.w,oL); tryX(oL,oL); tryX(oR-it.w,oR);
+  });
+  tryX(0,0); tryX(st.wallW-it.w,st.wallW);
+  nx=nx2;
+  // vertical: standard lines
+  let besty=8, ny2=ny;
+  const tryY=(cand,line)=>{ const d=Math.abs(cand-ny); if(d<besty){besty=d; ny2=cand; gy=line;} };
+  tryY(PLINTH,null); tryY(upY(it),UPTOP); tryY(TOP,TOP);
+  others.forEach(o=>{ tryY(o.r.y,null); tryY(o.r.y+o.it.h-it.h,null); });
+  ny=ny2;
+  nx=Math.round(Math.min(st.wallW-it.w+40,Math.max(-40,nx)));
+  ny=Math.round(Math.min(WALLH-it.h,Math.max(0,ny)));
+  return {x:nx,y:ny,gx,gy};
+}
+
+/* ---------- drag anywhere ---------- */
+function bindDrag(){
+  sceneEl.querySelectorAll('.it').forEach(el=>{
+    el.addEventListener('pointerdown',e=>{
+      e.preventDefault();
+      const u=el.dataset.u, f=find(u); if(!f) return;
+      const r=f.arr[f.i], it=item(r.a);
+      const sx=e.clientX, sy=e.clientY, x0=r.x, y0=r.y; let moved=false, res=null;
+      el.setPointerCapture(e.pointerId);
+      let gv=null;
+      const mv=ev=>{
+        if(!moved&&Math.hypot(ev.clientX-sx,ev.clientY-sy)<5) return;
+        if(!moved){ moved=true; el.classList.add('drag'); gv=document.createElement('div'); gv.className='guide-v'; sceneEl.appendChild(gv); }
+        res=snap(r, x0+(ev.clientX-sx)/k, y0-(ev.clientY-sy)/k);
+        el.style.left=(SIDE+res.x)+'px'; el.style.top=Y(res.y+it.h)+'px';
+        if(res.gx!=null){ gv.hidden=false; gv.style.cssText='left:'+(SIDE+res.gx-0.5/k*2)+'px;top:0;width:'+(1.5/k)+'px;height:'+WALLH+'px'; } else gv.hidden=true;
+      };
+      const upH=()=>{
+        el.removeEventListener('pointermove',mv); el.removeEventListener('pointerup',upH); el.removeEventListener('pointercancel',upH);
+        if(gv) gv.remove();
+        if(!moved){ select(sel===u?null:u); return; }
+        r.x=res.x; r.y=res.y; sel=u; commit();
+      };
+      el.addEventListener('pointermove',mv); el.addEventListener('pointerup',upH); el.addEventListener('pointercancel',upH);
+    });
+  });
+}
+stage.addEventListener('pointerdown',e=>{ if(!e.target.closest('.it')&&sel){ sel=null; render(); renderSel(); } });
+
+/* ---------- selection ---------- */
+function find(u){ for(const row of ROWS){ const i=st[row].findIndex(r=>r.u===u); if(i>=0) return {row,i,arr:st[row]}; } return null; }
+function select(u){ sel=u; render(); renderSel(); }
+function renderSel(){
+  const f=sel&&find(sel), bar=$('selbar');
+  if(mode3d){ bar.innerHTML='<span class="hint">ลากเพื่อหมุนรอบห้อง ถ่างนิ้วหรือเลื่อนล้อเมาส์เพื่อซูม กด "3D" อีกครั้งเพื่อกลับมุมเริ่มต้น การย้ายชิ้นทำในโหมดหน้าตรง</span>'; return; }
+  if(!f){ bar.innerHTML='<span class="hint">แตะชิ้นเพื่อเลือก ลากไปวางตรงไหนก็ได้บนผนัง</span>'; return; }
+  const r=f.arr[f.i], a=r.a, it=item(a);
+  bar.innerHTML=(ITEMS[a]?'<img src="'+img(a)+'" alt="">':'')+'<div class="txt"><div class="nm">'+(it.t==='hood'?'ช่องเครื่องดูดควัน '+it.w+' ซม.':it.n)+'</div><div class="mt">'+(ITEMS[a]?'Article '+a+' · ':'')+'ห่างผนังซ้าย '+r.x+(it.fx?'':' · สูงจากพื้น '+r.y)+' ซม.</div></div>'+
+    '<div class="btnrow"><button class="ib" type="button" data-n="-5,0" aria-label="เลื่อนซ้าย">◀</button><button class="ib" type="button" data-n="5,0" aria-label="เลื่อนขวา">▶</button>'+(it.fx?'':'<button class="ib" type="button" data-n="0,5" aria-label="เลื่อนขึ้น">▲</button><button class="ib" type="button" data-n="0,-5" aria-label="เลื่อนลง">▼</button><button class="ib" type="button" id="sH">เข้าแนวมาตรฐาน</button>')+'<button class="ib" type="button" id="sC">ทำซ้ำ</button><button class="ib del" type="button" id="sD">ลบ</button></div>';
+  bar.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{ const [dx,dy]=b.dataset.n.split(',').map(Number); nudge(dx,dy); });
+  if($('sH')) $('sH').onclick=()=>{ const f2=find(sel); if(!f2) return; const r2=f2.arr[f2.i]; r2.y=homeY(item(r2.a)); commit(); };
+  $('sC').onclick=()=>{ const f2=find(sel); if(!f2) return; const r2=f2.arr[f2.i]; const n={u:uid(),a:r2.a,...place(r2.a,r2)}; f2.arr.push(n); sel=n.u; commit(); };
+  $('sD').onclick=()=>{ const f2=find(sel); if(!f2) return; f2.arr.splice(f2.i,1); sel=null; commit(); };
+}
+function nudge(dx,dy){ const f=find(sel); if(!f) return; const r=f.arr[f.i], it=item(r.a);
+  if(it.fx){ r.x=Math.round(r.x+dx); const cs=counterSpan(); if(cs) r.x=Math.min(cs.x1-it.w-2,Math.max(cs.x0+2,r.x)); commit(); return; }
+  r.x=Math.round(Math.min(st.wallW-it.w+40,Math.max(-40,r.x+dx))); r.y=Math.round(Math.min(WALLH-it.h,Math.max(0,r.y+dy))); commit(); }
+
+/* ---------- placing new pieces ---------- */
+function place(a,after){
+  if(FIX[a]){ const it=FIX[a], cs=counterSpan(); const want=FIX[a].t==='sink'?['door2','door1']:['gas'];
+    let tgt=null; for(const t of want){ tgt=st.lo.find(r=>ITEMS[r.a].t===t&&!st.fx.some(f=>Math.abs(f.x+item(f.a).w/2-(r.x+ITEMS[r.a].w/2))<10)); if(tgt) break; }
+    let x= tgt? tgt.x+ITEMS[tgt.a].w/2-it.w/2 : (cs? cs.x0+cs.w/2-it.w/2 : st.wallW/2-it.w/2);
+    if(after) x=after.x+item(after.a).w+10;
+    if(cs) x=Math.min(cs.x1-it.w-2,Math.max(cs.x0+2,x));
+    return {x:Math.round(x),y:TOP}; }
+  const it=item(a), row=it.up?'up':'lo', gap=it.up?0:PIL, y=homeY(it);
+  const same=st[row].filter(r=>Math.abs(r.y-y)<4);
+  let x;
+  if(after) x=after.x+item(after.a).w+gap;
+  else if(same.length) x=Math.max(...same.map(r=>r.x+item(r.a).w))+gap;
+  else x=Math.round((st.wallW-it.w)/2);
+  if(x+it.w>st.wallW){ x=Math.max(0,st.wallW-it.w); }
+  return {x,y};
+}
+function add(a){
+  const it=item(a), row=it.fx?'fx':(it.up?'up':'lo');
+  if(it.fx&&!counterSpan()){ fitCounter(); if(!counterSpan()){ st.cx=Math.round(st.wallW/2-60); st.cw=120; } }
+  const f=sel&&find(sel), after=(f&&f.row===row)?f.arr[f.i]:null;
+  const r={u:uid(),a,...place(a,after)};
+  st[row].push(r); sel=r.u; commit();
+  toast('วาง '+(it.t==='hood'?'ช่องเครื่องดูดควัน':it.n)+' แล้ว ลากเพื่อย้ายได้');
+}
+
+/* ---------- panel ---------- */
+const TABS=['series','add','color','list'];
+function setTab(t){ TABS.forEach(n=>{ $('tab-'+n).setAttribute('aria-selected',String(n===t)); $('p-'+n).hidden=n!==t; }); }
+TABS.forEach(n=>$('tab-'+n).addEventListener('click',()=>setTab(n)));
+
+function renderSeries(){
+  const s=SMAP[st.series];
+  $('cur').innerHTML='<img src="'+s.room+'" alt="ห้องตัวอย่าง '+s.name+'"><div><div class="chip">'+s.mat+'</div><div class="nm">'+s.name+'</div><div class="mt">'+s.tone+' · '+s.arts.length+' รายการ</div></div>';
+  $('seriesGrid').innerHTML=SERIES.map(x=>'<button class="sc" type="button" data-s="'+x.id+'" aria-pressed="'+(x.id===st.series)+'"><img src="'+x.room+'" alt="" loading="lazy"><span class="lab"><span class="dot" style="background:'+x.col+'"></span><span><span class="nm">'+x.name+'</span><br><span class="mt">'+x.mat+' · '+x.tone+'</span></span></span></button>').join('');
+  $('seriesGrid').querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>switchSeries(b.dataset.s)));
+}
+function switchSeries(id){
+  if(id===st.series) return;
+  let dropped=0;
+  const conv=arr=>arr.map(r=>{
+    if(HOODS[r.a]) return r;
+    const it=ITEMS[r.a];
+    let a=pick(id,it.t,it.w);
+    if(!a&&it.t==='micro') a=pick(id,'box',it.w);
+    if(!a){ dropped++; return null; }
+    const nit=ITEMS[a];
+    const y = it.up ? Math.max(0, r.y+it.h-nit.h) : r.y;   // keep wall pieces hanging from the same top line
+    return {u:r.u,a,x:r.x,y};
+  }).filter(Boolean);
+  st.up=conv(st.up); st.lo=conv(st.lo); st.series=id;
+  if(sel&&!find(sel)) sel=null;
+  commit();
+  toast('เปลี่ยนเป็น '+SMAP[id].name+(dropped?' · นำออก '+dropped+' ชิ้นที่ซีรีส์นี้ไม่มี':''));
+}
+function tile(a,it){
+  return '<button class="ti" type="button" data-a="'+a+'"><span class="ph">'+(ITEMS[a]?'<img src="'+img(a)+'" alt="" loading="lazy">':(FIX[a]?(FIX[a].t==='sink'?'<svg width="64" height="46" viewBox="0 0 64 46" aria-hidden="true"><rect x="29" y="4" width="5" height="26" rx="2" fill="#A9AFB3"/><rect x="29" y="4" width="18" height="5" rx="2" fill="#C5C9CC"/><rect x="4" y="30" width="56" height="12" rx="3" fill="#B8BDC1"/><rect x="10" y="32" width="44" height="7" rx="2" fill="#7D8387"/></svg>':'<svg width="64" height="46" viewBox="0 0 64 46" aria-hidden="true"><rect x="4" y="34" width="56" height="7" rx="2" fill="#1E1F21"/><rect x="10" y="18" width="20" height="14" rx="3" fill="#55595D"/><rect x="38" y="24" width="16" height="9" rx="3" fill="#6B6F73"/></svg>'):'<svg width="60" height="46" viewBox="0 0 60 46" aria-hidden="true"><rect x="22" y="2" width="16" height="26" fill="#B9BEC2"/><path d="M6 44 L18 28 H42 L54 44 Z" fill="#9FA5AA"/></svg>'))+'</span>'+
+    '<span class="nm">'+it.n+'</span><span class="mt">'+(ITEMS[a]?a+' · '+it.sz:'กว้าง '+it.w+' ซม.')+'</span><span class="plus">+ วาง</span></button>';
+}
+function renderTray(){
+  const s=SMAP[st.series];
+  $('trayUp').innerHTML=s.arts.filter(a=>ITEMS[a].up).map(a=>tile(a,ITEMS[a])).join('');
+  $('trayLo').innerHTML=s.arts.filter(a=>!ITEMS[a].up).map(a=>tile(a,ITEMS[a])).join('');
+  $('trayX').innerHTML=Object.keys(HOODS).map(a=>tile(a,HOODS[a])).join('');
+  $('trayF').innerHTML=Object.keys(FIX).map(a=>tile(a,FIX[a])).join('');
+  document.querySelectorAll('.tray [data-a]').forEach(b=>b.addEventListener('click',()=>add(b.dataset.a)));
+  $('presets').innerHTML=PRESETS.map((p,i)=>'<button class="ib" type="button" data-p="'+i+'">'+p.n+'</button>').join('');
+  $('presets').querySelectorAll('[data-p]').forEach(b=>{
+    let arm=null;
+    b.addEventListener('click',()=>{
+      if((st.up.length||st.lo.length)&&!arm){ const t=b.textContent; b.textContent='แตะอีกครั้งเพื่อแทนที่'; arm=setTimeout(()=>{arm=null;b.textContent=t;},2500); return; }
+      clearTimeout(arm); arm=null; applyPreset(st,PRESETS[+b.dataset.p]); sel=null; commit(); toast('ใช้แบบ '+PRESETS[+b.dataset.p].n);
+    });
+  });
+}
+function colorRow(host,key,pal,hexEl){
+  const cur=st[key].toLowerCase(), custom=!pal.some(c=>c.toLowerCase()===cur);
+  $(host).innerHTML=pal.map(c=>'<button class="sw" type="button" data-c="'+c+'" style="background:'+c+'" aria-label="สี '+c+'" aria-pressed="'+(c.toLowerCase()===cur)+'"></button>').join('')+
+    '<label class="picker'+(custom?' on':'')+'" style="'+(custom?'background:'+st[key]+';color:'+(lum(st[key])>.6?'#333':'#fff'):'')+'" title="เลือกสีเอง">+<input type="color" id="'+host+'-in" value="'+st[key]+'" aria-label="เลือกสีเอง"></label>';
+  $(hexEl).textContent=st[key].toUpperCase();
+  $(host).querySelectorAll('[data-c]').forEach(b=>b.addEventListener('click',()=>{ st[key]=b.dataset.c; commit(); }));
+  const inp=$(host+'-in');
+  inp.addEventListener('input',()=>{ st[key]=inp.value; save(); render(); $(hexEl).textContent=inp.value.toUpperCase(); });
+  inp.addEventListener('change',()=>{ st[key]=inp.value; commit(); });
+}
+function renderColors(){
+  colorRow('colWall','wallC',PAL.wall,'wallHex');
+  colorRow('colBody','bodyC',PAL.body,'bodyHex');
+  colorRow('colTop','topC',PAL.top,'topHex');
+  colorRow('colFloor','floorC',PAL.floor,'floorHex');
+  $('wallW').value=st.wallW; $('wallWOut').textContent=st.wallW+' ซม.';
+  $('cntW').max=st.wallW; $('cntW').value=st.cw; $('cntWOut').textContent=st.cw?st.cw+' ซม.':'ไม่มี';
+  $('cntX').max=Math.max(0,st.wallW-st.cw); $('cntX').value=st.cx; $('cntXOut').textContent=st.cx+' ซม.';
+}
+function clampCounter(){ st.cw=Math.min(st.cw,st.wallW); st.cx=Math.min(Math.max(0,st.cx),st.wallW-st.cw); }
+$('cntW').addEventListener('input',()=>{ st.cw=+$('cntW').value; clampCounter(); $('cntWOut').textContent=st.cw?st.cw+' ซม.':'ไม่มี'; $('cntX').max=Math.max(0,st.wallW-st.cw); save(); render(); });
+$('cntX').addEventListener('input',()=>{ st.cx=+$('cntX').value; clampCounter(); $('cntXOut').textContent=st.cx+' ซม.'; save(); render(); });
+['cntW','cntX'].forEach(id=>$(id).addEventListener('change',()=>commit()));
+$('cL').onclick=()=>{ st.cx=0; commit(); };
+$('cM').onclick=()=>{ st.cx=Math.round((st.wallW-st.cw)/2); commit(); };
+$('cR').onclick=()=>{ st.cx=st.wallW-st.cw; commit(); };
+$('cFit').onclick=()=>{ if(fitCounter()) commit(); else toast('ยังไม่มีบานใต้เคาน์เตอร์ให้วัด'); };
+$('cFull').onclick=()=>{ st.cx=0; st.cw=st.wallW; commit(); };
+$('wallW').addEventListener('input',()=>{ st.wallW=+$('wallW').value; clampCounter(); $('wallWOut').textContent=st.wallW+' ซม.'; save(); render(); });
+$('wallW').addEventListener('change',()=>commit());
+
+/* ---------- list ---------- */
+function counts(){
+  const c={}, order=[];
+  [...st.up,...st.lo].forEach(r=>{ if(!ITEMS[r.a]) return; if(!c[r.a]){c[r.a]=0;order.push(r.a);} c[r.a]++; });
+  return order.map(a=>({a,q:c[a]}));
+}
+function renderList(){
+  const rows=counts(), total=rows.reduce((s,r)=>s+r.q,0);
+  $('cnt').textContent=total;
+  const hoods=st.up.filter(r=>HOODS[r.a]);
+  const fxRows=Object.keys(FIX).map(k2=>({a:k2,q:st.fx.filter(r=>r.a===k2).length})).filter(r=>r.q);
+  $('list').innerHTML = rows.length ? rows.map(r=>{ const it=ITEMS[r.a]; return '<div class="li"><img src="'+img(r.a)+'" alt=""><div><div class="nm">'+it.n+'</div><div class="mt">Article '+r.a+' · '+it.sz+' ซม.</div></div><div class="q">×'+r.q+'</div></div>'; }).join('')
+    + (hoods.length?'<div class="li"><span></span><div><div class="nm">เครื่องดูดควัน</div><div class="mt">กว้าง '+hoods.map(r=>HOODS[r.a].w).join(', ')+' ซม. · เลือกรุ่นกับพนักงาน</div></div><div class="q">×'+hoods.length+'</div></div>':'')
+    + fxRows.map(r=>'<div class="li"><span></span><div><div class="nm">'+FIX[r.a].n+'</div><div class="mt">เลือกรุ่นกับพนักงาน</div></div><div class="q">×'+r.q+'</div></div>').join('')
+    : '<p class="note">ยังไม่มีสินค้า ไปที่ "เพิ่มชิ้น" เพื่อเริ่มวาง</p>';
+}
+function listText(){
+  const s=SMAP[st.series], rows=counts(), cs=counterSpan();
+  const L=['ไอเดียครัวปูน CABIN · ซีรีส์ '+s.name+' ('+s.mat+')','ผนังยาว '+st.wallW+' ซม.'+(cs?' · เคาน์เตอร์ประมาณ '+Math.round(cs.w)+' ซม.':''),
+    'สีผนัง '+st.wallC.toUpperCase()+' · ตัวเคาน์เตอร์ '+st.bodyC.toUpperCase()+' · ท็อป '+st.topC.toUpperCase(),''];
+  rows.forEach((r,i)=>L.push((i+1)+'. Article '+r.a+' '+ITEMS[r.a].n+' '+ITEMS[r.a].sz+' ซม. × '+r.q));
+  const h=st.up.filter(r=>HOODS[r.a]); if(h.length) L.push('- เครื่องดูดควัน กว้าง '+h.map(r=>HOODS[r.a].w).join(', ')+' ซม. × '+h.length);
+  Object.keys(FIX).forEach(k2=>{ const q=st.fx.filter(r=>r.a===k2).length; if(q) L.push('- '+FIX[k2].n+' × '+q+' (เลือกรุ่นกับพนักงาน)'); });
+  return L.join('\n');
+}
+$('copyBtn').addEventListener('click',()=>{
+  const t=listText(), fb=$('fallback');
+  const showFb=()=>{ fb.hidden=false; fb.value=t; fb.focus(); fb.select(); toast('กดค้างที่ข้อความเพื่อคัดลอก'); };
+  try{ navigator.clipboard.writeText(t).then(()=>{ fb.hidden=true; toast('คัดลอกรายการแล้ว'); },showFb); }catch(e){ showFb(); }
+});
+let clr=null;
+$('clearBtn').addEventListener('click',()=>{
+  const b=$('clearBtn');
+  if(!clr){ b.textContent='แตะอีกครั้งเพื่อล้าง'; clr=setTimeout(()=>{clr=null;b.textContent='ล้างครัวทั้งหมด';},2500); return; }
+  clearTimeout(clr); clr=null; b.textContent='ล้างครัวทั้งหมด'; st.up=[]; st.lo=[]; st.fx=[]; sel=null; commit();
+});
+
+/* ---------- 3D view ---------- */
+let mode3d=false, T=null;
+const S3=0.01;
+function loadScript(src){ return new Promise((res,rej)=>{ const e=document.createElement('script'); e.src=src; e.onload=res; e.onerror=rej; document.head.appendChild(e); }); }
+async function ensure3d(){
+  if(T) return true;
+  $('loading3d').hidden=false;
+  try{
+    if(!window.THREE) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js');
+    if(!THREE.OrbitControls) await loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js');
+  }catch(e){ $('loading3d').hidden=true; toast('เปิดภาพ 3D ไม่ได้ ลองกดอีกครั้ง'); return false; }
+  $('loading3d').hidden=true;
+  const host=$('view3d');
+  const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputEncoding=THREE.sRGBEncoding;
+  host.appendChild(renderer.domElement);
+  const scene=new THREE.Scene(); scene.background=new THREE.Color('#D8D5CF');
+  const cam=new THREE.PerspectiveCamera(46,1,0.05,60);
+  const ctl=new THREE.OrbitControls(cam,renderer.domElement);
+  ctl.enableDamping=true; ctl.maxPolarAngle=Math.PI/2-0.03; ctl.minDistance=0.6; ctl.maxDistance=12;
+  scene.add(new THREE.HemisphereLight(0xffffff,0x8a8378,0.7));
+  const sun=new THREE.DirectionalLight(0xffffff,0.65); sun.castShadow=true; sun.shadow.mapSize.set(2048,2048); sun.shadow.bias=-0.0004;
+  scene.add(sun); scene.add(sun.target);
+  const grp=new THREE.Group(); scene.add(grp);
+  T={renderer,scene,cam,ctl,sun,grp,loader:new THREE.TextureLoader(),tex:{},side:{},placed:false,pending:[]};
+  new ResizeObserver(size3d).observe(stage);
+  (function loop(){ if(mode3d){ ctl.update(); renderer.render(scene,cam); } requestAnimationFrame(loop); })();
+  return true;
+}
+function size3d(){ if(!T) return; const w=stage.clientWidth,h=stage.clientHeight; if(!w||!h) return; T.renderer.setSize(w,h); T.cam.aspect=w/h; T.cam.updateProjectionMatrix(); }
+function sideMat(a){
+  if(T.side[a]) return T.side[a];
+  const m=new THREE.MeshStandardMaterial({color:0xcccccc,roughness:.7}); T.side[a]=m; return m;
+}
+function frontTex(a){
+  if(T.tex[a]) return T.tex[a];
+  let done; T.pending.push(new Promise(r=>{ done=r; }));
+  const t=T.loader.load(img(a),tt=>{ done();
+    try{ // tint the cabinet sides with the colour of the panel's edge
+      const c=document.createElement('canvas'); c.width=c.height=4; const x=c.getContext('2d'); const im=tt.image;
+      x.drawImage(im,im.width*0.93,im.height*0.2,im.width*0.06,im.height*0.6,0,0,4,4);
+      const d=x.getImageData(0,0,4,4).data; let r=0,g=0,b=0; for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];}
+      const n=d.length/4; sideMat(a).color.setRGB(r/n/255,g/n/255,b/n/255).convertSRGBToLinear();
+    }catch(e){}
+  },undefined,()=>done());
+  t.encoding=THREE.sRGBEncoding; t.anisotropy=4; T.tex[a]=t; return t;
+}
+const M3=(c,r,m)=>new THREE.MeshStandardMaterial({color:new THREE.Color(c).convertSRGBToLinear(),roughness:r==null?.85:r,metalness:m||0});
+function bx(w,h,d,x,y,z,m,shadow){
+  const mesh=new THREE.Mesh(new THREE.BoxGeometry(w*S3,h*S3,d*S3),m);
+  mesh.position.set((x+w/2)*S3,(y+h/2)*S3,(z+d/2)*S3);
+  mesh.castShadow=shadow!==false; mesh.receiveShadow=true; T.grp.add(mesh); return mesh;
+}
+function cyl(r,h,x,y,z,m){ const c=new THREE.Mesh(new THREE.CylinderGeometry(r*S3,r*S3,h*S3,24),m); c.position.set(x*S3,(y+h/2)*S3,z*S3); c.castShadow=true; T.grp.add(c); return c; }
+function build3d(){
+  if(!T) return;
+  T.grp.children.slice().forEach(o=>{ T.grp.remove(o); if(o.geometry) o.geometry.dispose(); });
+  const W=st.wallW, D=320;
+  const steel=M3('#C3C7CA',.35,.55), steelD=M3('#7F858A',.4,.5), glass=M3('#121315',.15,.2), dark=M3('#3A3C3F',.6,.2);
+  bx(W+12,2,D,-6,-2,0,M3(st.floorC,.9),false);
+  bx(W+12,WALLH,6,-6,0,-6,M3(st.wallC,.95),false);
+  bx(6,WALLH,D,-6,0,0,M3(shade(st.wallC,-.06),.95),false);
+  bx(6,WALLH,D,W,0,0,M3(shade(st.wallC,-.06),.95),false);
+  const cs=counterSpan();
+  const onCounter=r=>cs&&r.y<=PLINTH+3&&r.x>=cs.x0-2&&r.x+item(r.a).w<=cs.x1+2;
+  if(cs){
+    bx(cs.w,TOP-SLAB-PLINTH,60,cs.x0,PLINTH,0,M3(st.bodyC,.9));
+    bx(cs.w-4,PLINTH,54,cs.x0+2,0,0,M3(shade(st.bodyC,-.25),.9));
+    bx(cs.w+4,SLAB,64,cs.x0-2,TOP-SLAB,0,M3(st.topC,.45));
+  }
+  st.lo.forEach(r=>{
+    const it=ITEMS[r.a], mats=()=>{ const s2=sideMat(r.a); return [s2,s2,s2,s2,new THREE.MeshStandardMaterial({map:frontTex(r.a),roughness:.55}),s2]; };
+    if(onCounter(r)) bx(it.w,it.h,1.6,r.x,r.y,60,mats());
+    else bx(it.w,it.h,48,r.x,r.y,0,mats());
+  });
+  st.up.forEach(r=>{
+    const it=item(r.a);
+    if(it.t==='hood'){
+      bx(it.w*0.3,UPTOP-r.y-12,24,r.x+it.w*0.35,r.y+12,0,steel);
+      bx(it.w,12,50,r.x,r.y,0,steel);
+      bx(it.w-4,0.6,46,r.x+2,r.y-0.3,2,dark,false);
+      return;
+    }
+    const s2=sideMat(r.a);
+    bx(it.w,it.h,34,r.x,r.y,0,[s2,s2,s2,s2,new THREE.MeshStandardMaterial({map:frontTex(r.a),roughness:.55}),s2]);
+  });
+  st.fx.forEach(r=>{
+    const it=FIX[r.a], cx=r.x+it.w/2;
+    if(it.t==='sink'){
+      bx(it.w,0.6,48,r.x,TOP,8,steel,false);
+      bx(it.w*0.78,0.7,36,r.x+it.w*0.11,TOP+0.05,14,steelD,false);
+      cyl(1.6,28,cx,TOP,8,steel);
+      bx(3,3,20,cx-1.5,TOP+26,7,steel);
+    } else {
+      bx(it.w,1.2,50,r.x,TOP,6,glass,false);
+      [[.3,.38],[.7,.62]].forEach(([px,pz],i)=>{
+        const ring=new THREE.Mesh(new THREE.TorusGeometry((i?8:9.5)*S3,0.5*S3,8,40),M3('#6E7276',.5)); ring.rotation.x=Math.PI/2;
+        ring.position.set((r.x+it.w*px)*S3,(TOP+1.4)*S3,(6+50*pz)*S3); T.grp.add(ring);
+      });
+      cyl(11,13,r.x+it.w*.3,TOP+1.2,6+50*.38,M3('#55595D',.35,.4));
+    }
+  });
+  T.sun.position.set(W*0.75*S3,4.2,4.2); T.sun.target.position.set(W/2*S3,0,0.6);
+  const sc=T.sun.shadow.camera, rr=Math.max(W,D)*S3*0.85+1; sc.left=-rr; sc.right=rr; sc.top=rr; sc.bottom=-rr; sc.near=0.5; sc.far=15; sc.updateProjectionMatrix();
+  if(!T.placed){ resetCam(); T.placed=true; }
+}
+function resetCam(){ const W=st.wallW*S3; T.cam.position.set(W*0.78,1.65,Math.max(2.6,W*0.95)); T.ctl.target.set(W/2,1.05,0.3); T.ctl.update(); }
+async function setMode(is3d){
+  if(is3d){ if(!(await ensure3d())) return; }
+  mode3d=is3d;
+  $('m2d').setAttribute('aria-pressed',String(!is3d)); $('m3d').setAttribute('aria-pressed',String(is3d));
+  $('view3d').hidden=!is3d; sceneEl.hidden=is3d;
+  if(is3d){ size3d(); build3d(); }
+  renderSel();
+}
+$('m2d').addEventListener('click',()=>setMode(false));
+$('m3d').addEventListener('click',()=>{ if(mode3d){ resetCam(); return; } setMode(true); });
+
+/* ---------- export PNG / PDF ---------- */
+async function snap3d(){
+  try{
+    if(!(await ensure3d())) return null;
+    build3d();
+    await Promise.race([Promise.all(T.pending),new Promise(r=>setTimeout(r,6000))]);
+    build3d();
+    const r=T.renderer, cv=r.domElement, ow=cv.clientWidth||stage.clientWidth, oh=cv.clientHeight||stage.clientHeight;
+    r.setPixelRatio(1); r.setSize(1800,1100,false); T.cam.aspect=1800/1100; T.cam.updateProjectionMatrix();
+    r.render(T.scene,T.cam);
+    const url=cv.toDataURL('image/png');
+    r.setPixelRatio(Math.min(window.devicePixelRatio||1,2)); size3d();
+    return await loadImg(url);
+  }catch(e){ return null; }
+}
+function renderExpSeg(){ const v=st.expView||'both'; document.querySelectorAll('.expseg [data-v]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===v))); }
+document.querySelectorAll('.expseg [data-v]').forEach(b=>b.addEventListener('click',()=>{ st.expView=b.dataset.v; save(); renderExpSeg(); }));
+renderExpSeg();
+
+let DL=null;
+(async()=>{ try{ DL=window.claude&&window.claude.use?await window.claude.use('downloads'):null; }catch(e){ DL=null; }
+})();
+const loadImg=src=>new Promise(res=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src=src; });
+const FD="'Anuphan','IBM Plex Sans Thai',system-ui,sans-serif", FB="'IBM Plex Sans Thai','Noto Sans Thai',system-ui,sans-serif", FM="'IBM Plex Mono',ui-monospace,monospace";
+function rrect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+function exportRows(){
+  const rows=counts().map(r=>({a:r.a,name:ITEMS[r.a].n,art:r.a,size:ITEMS[r.a].sz,q:r.q,im:img(r.a)}));
+  const h=st.up.filter(r=>HOODS[r.a]);
+  if(h.length) rows.push({name:'เครื่องดูดควัน (เลือกรุ่นกับพนักงาน)',art:'—',size:h.map(r=>HOODS[r.a].w).join(', '),q:h.length,draw:'hood'});
+  Object.keys(FIX).forEach(k2=>{ const q=st.fx.filter(r=>r.a===k2).length; if(q) rows.push({name:FIX[k2].n+' (เลือกรุ่นกับพนักงาน)',art:'—',size:String(FIX[k2].w),q,draw:FIX[k2].t}); });
+  return rows;
+}
+// draw the front elevation in cm space onto a canvas region
+async function drawElevation(c,X,Y0,BW,BH,ims){
+  const Wcm=st.wallW+SIDE*2, s2=Math.min(BW/Wcm,BH/(WALLH+26));
+  const ox=X+(BW-Wcm*s2)/2, oy=Y0;
+  const px=cm=>ox+(cm+SIDE)*s2, py=cm=>oy+(WALLH-cm)*s2;
+  c.save(); rrect(c,ox,oy,Wcm*s2,WALLH*s2,10); c.clip();
+  let g=c.createLinearGradient(ox,0,ox+Wcm*s2,0); g.addColorStop(0,shade(st.wallC,-.1)); g.addColorStop(.08,st.wallC); g.addColorStop(.92,st.wallC); g.addColorStop(1,shade(st.wallC,-.1));
+  c.fillStyle=g; c.fillRect(ox,oy,Wcm*s2,WALLH*s2);
+  g=c.createLinearGradient(0,py(6),0,py(0)); g.addColorStop(0,st.floorC); g.addColorStop(1,shade(st.floorC,-.12)); c.fillStyle=g; c.fillRect(ox,py(6),Wcm*s2,6*s2);
+  c.fillStyle='rgba(0,0,0,.08)'; c.fillRect(px(0)-1,oy,2,py(6)-oy); c.fillRect(px(st.wallW)-1,oy,2,py(6)-oy);
+  const cs=counterSpan();
+  if(cs){
+    c.shadowColor='rgba(0,0,0,.25)'; c.shadowBlur=8*s2; c.shadowOffsetY=2*s2;
+    g=c.createLinearGradient(0,py(TOP-SLAB),0,py(0)); g.addColorStop(0,shade(st.bodyC,.04)); g.addColorStop(1,shade(st.bodyC,-.06)); c.fillStyle=g;
+    c.fillRect(px(cs.x0),py(TOP-SLAB),cs.w*s2,(TOP-SLAB)*s2);
+    g=c.createLinearGradient(0,py(TOP),0,py(TOP-SLAB)); g.addColorStop(0,shade(st.topC,.14)); g.addColorStop(1,shade(st.topC,-.18)); c.fillStyle=g;
+    c.fillRect(px(cs.x0-2),py(TOP),(cs.w+4)*s2,SLAB*s2);
+    c.shadowColor='transparent'; c.fillStyle='rgba(0,0,0,.12)'; c.fillRect(px(cs.x0+2),py(PLINTH),(cs.w-4)*s2,(PLINTH-1)*s2);
+  }
+  const draw=(r)=>{
+    const it=item(r.a), x=px(r.x), y=py(r.y+it.h), w=it.w*s2, h=it.h*s2;
+    if(it.t==='hood'){
+      g=c.createLinearGradient(x+w*.35,0,x+w*.65,0); g.addColorStop(0,'#9EA3A7'); g.addColorStop(.45,'#D5D8DA'); g.addColorStop(1,'#A3A8AC');
+      c.fillStyle=g; c.fillRect(x+w*.35,y,w*.3,h-14*s2);
+      c.fillStyle='#BFC3C6'; c.beginPath(); c.moveTo(x+w*.18,y+h-14*s2); c.lineTo(x+w*.82,y+h-14*s2); c.lineTo(x+w,y+h); c.lineTo(x,y+h); c.closePath(); c.fill(); return;
+    }
+    if(it.t==='sink'){
+      c.fillStyle='#B4BABE'; c.fillRect(x+w/2-2*s2,y+h*.06,4*s2,h*.94); c.fillStyle='#C9CDD0'; c.fillRect(x+w/2-2*s2,y,18*s2,4*s2);
+      c.fillStyle='#AEB3B7'; c.fillRect(x+w*.08,y+h-1.6*s2,w*.84,1.6*s2); return;
+    }
+    if(it.t==='hob'){
+      c.fillStyle='#151617'; c.fillRect(x,y+h-2.4*s2,w,2.4*s2);
+      c.fillStyle='#55595D'; c.fillRect(x+w*.1,y+h-2.4*s2-12*s2,w*.3,12*s2); c.fillRect(x+w*.66,y+h-2.4*s2-7*s2,w*.2,7*s2); return;
+    }
+    const im=ims[r.a];
+    c.shadowColor='rgba(0,0,0,.25)'; c.shadowBlur=(it.up?12:3)*s2; c.shadowOffsetY=(it.up?6:1)*s2;
+    if(im) c.drawImage(im,x,y,w,h); else { c.fillStyle='#ccc'; c.fillRect(x,y,w,h); }
+    c.shadowColor='transparent';
+  };
+  st.lo.forEach(draw); st.up.forEach(draw); st.fx.forEach(draw);
+  c.restore();
+  // dimension lines
+  const dim=(x0,x1,yy,label)=>{
+    c.strokeStyle='#5E6B78'; c.fillStyle='#14263A'; c.lineWidth=2;
+    c.beginPath(); c.moveTo(x0,yy); c.lineTo(x1,yy); c.moveTo(x0,yy-10); c.lineTo(x0,yy+10); c.moveTo(x1,yy-10); c.lineTo(x1,yy+10); c.stroke();
+    c.font='600 26px '+FM; const tw=c.measureText(label).width; c.fillStyle='#fff'; c.fillRect((x0+x1)/2-tw/2-10,yy-18,tw+20,36); c.fillStyle='#14263A'; c.textAlign='center'; c.textBaseline='middle'; c.fillText(label,(x0+x1)/2,yy); c.textAlign='left'; c.textBaseline='alphabetic';
+  };
+  const by=oy+WALLH*s2+28;
+  if(cs) dim(px(cs.x0),px(cs.x1),by,'เคาน์เตอร์ '+Math.round(cs.w)+' ซม.');
+  dim(px(0),px(st.wallW),by+(cs?54:0),'ผนัง '+st.wallW+' ซม.');
+  return oy+WALLH*s2+(cs?100:50);
+}
+async function buildSheets(paged){
+  try{ await Promise.all([document.fonts.load('700 40px Anuphan'),document.fonts.load('500 30px "IBM Plex Sans Thai"'),document.fonts.load('500 24px "IBM Plex Mono"')]); }catch(e){}
+  const ims={}; await Promise.all([...new Set([...st.lo,...st.up].map(r=>r.a).filter(a=>ITEMS[a]))].map(async a=>{ ims[a]=await loadImg(img(a)); }));
+  const view=st.expView||'both';
+  let shot3d=null;
+  if(view!=='2d'){ shot3d=await snap3d(); if(!shot3d) toast('สร้างภาพ 3D ไม่ได้ ใช้ภาพหน้าตรงแทน'); }
+  const only3d=view==='3d'&&shot3d;
+  const PW=2400, M=80, PH=Math.round(PW/1.4142), rows=exportRows(), sr=SMAP[st.series];
+  const RH=96, HEADH=210;
+  // measure how tall the drawing block is
+  const drawH=only3d?1050:(shot3d?820:900);
+  const tops=[]; // page canvases
+  const newCanvas=h=>{ const cv=document.createElement('canvas'); cv.width=PW; cv.height=h; const c=cv.getContext('2d'); c.fillStyle='#FFFFFF'; c.fillRect(0,0,PW,h); return [cv,c]; };
+  const header=(c,y,small)=>{
+    c.fillStyle='#D2702A'; c.font='600 26px '+FB; c.fillText('KITCHEN IDEA · เคาน์เตอร์ปูน',M,y+34);
+    c.fillStyle='#14324D'; c.font='700 '+(small?44:60)+'px '+FD; c.fillText('แผนครัวปูน CABIN · '+sr.name,M,y+(small?92:108));
+    c.fillStyle='#5E6B78'; c.font='500 28px '+FB;
+    const cs=counterSpan();
+    c.fillText(sr.mat+' · '+sr.tone+' · ผนัง '+st.wallW+' ซม.'+(cs?' · เคาน์เตอร์ '+Math.round(cs.w)+' ซม.':'')+' · '+new Date().toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}),M,y+(small?136:158));
+    if(!small){ // colour chips
+      const chips=[['ผนัง',st.wallC],['ตัวเคาน์เตอร์',st.bodyC],['ท็อป',st.topC],['พื้น',st.floorC]];
+      let x=PW-M; c.font='500 22px '+FB; c.textAlign='right';
+      for(let i=chips.length-1;i>=0;i--){ const [l,col]=chips[i]; const t=l+' '+col.toUpperCase(); const tw=c.measureText(t).width;
+        c.fillStyle='#3E444A'; c.fillText(t,x,y+52); c.fillStyle=col; c.beginPath(); c.arc(x-tw-22,y+44,14,0,Math.PI*2); c.fill(); c.strokeStyle='rgba(0,0,0,.2)'; c.lineWidth=2; c.stroke(); x-=tw+58; }
+      c.textAlign='left';
+    }
+    c.fillStyle='#D7DCE1'; c.fillRect(M,y+(small?160:190),PW-2*M,2);
+    return y+(small?180:HEADH);
+  };
+  const tableHead=(c,y)=>{
+    c.fillStyle='#EEF0F2'; c.fillRect(M,y,PW-2*M,64);
+    c.fillStyle='#5E6B78'; c.font='600 24px '+FB;
+    c.fillText('#',M+20,y+42); c.fillText('ภาพ',M+80,y+42); c.fillText('Article',M+220,y+42); c.fillText('รายการ',M+460,y+42); c.fillText('ขนาด (ซม.)',M+1360,y+42);
+    c.textAlign='right'; c.fillText('จำนวน',PW-M-24,y+42); c.textAlign='left';
+    return y+64;
+  };
+  const row=(c,y,r,i)=>{
+    c.fillStyle='#14263A'; c.font='500 26px '+FM; c.fillText(String(i+1),M+20,y+58);
+    c.fillStyle='#F4F4F2'; rrect(c,M+76,y+10,120,RH-20,8); c.fill();
+    if(r.a&&ims[r.a]){ const im=ims[r.a], sc=Math.min(108/im.width,(RH-28)/im.height); c.drawImage(im,M+136-im.width*sc/2,y+RH/2-im.height*sc/2,im.width*sc,im.height*sc); }
+    else { c.fillStyle='#9FA5AA'; c.font='600 20px '+FB; c.textAlign='center'; c.fillText(r.draw==='sink'?'ซิงก์':r.draw==='hob'?'เตา':'ดูดควัน',M+136,y+RH/2+7); c.textAlign='left'; }
+    c.fillStyle='#14263A'; c.font='500 28px '+FM; c.fillText(r.art,M+220,y+58);
+    c.font='600 30px '+FB; c.fillText(r.name,M+460,y+58);
+    c.font='500 26px '+FM; c.fillStyle='#3E444A'; c.fillText(r.size,M+1360,y+58);
+    c.fillStyle='#14263A'; c.font='700 34px '+FM; c.textAlign='right'; c.fillText('× '+r.q,PW-M-24,y+60); c.textAlign='left';
+    c.fillStyle='#E3E6EA'; c.fillRect(M,y+RH-1,PW-2*M,1);
+    return y+RH;
+  };
+  const footer=(c,y)=>{
+    const tot=rows.reduce((a,r)=>a+r.q,0);
+    c.fillStyle='#14324D'; c.font='700 32px '+FB; c.textAlign='right'; c.fillText('รวม '+tot+' ชิ้น',PW-M-24,y+52); c.textAlign='left';
+    c.fillStyle='#5E6B78'; c.font='500 22px '+FB;
+    c.fillText('ขนาดและรหัสสินค้าตามป้ายหน้าร้าน ภาพเป็นการจำลองเพื่อดูไอเดีย สีบนจออาจต่างจากของจริง ขนาดช่องเคาน์เตอร์และราคา สอบถามพนักงาน',M,y+100);
+    return y+130;
+  };
+  const drawBlock=async(c,y)=>{
+    if(only3d){
+      const bw=PW-2*M, sc=Math.min(bw/shot3d.width,(drawH-70)/shot3d.height), w=shot3d.width*sc, h=shot3d.height*sc, x=M+(bw-w)/2;
+      c.save(); rrect(c,x,y+10,w,h,12); c.clip(); c.drawImage(shot3d,x,y+10,w,h); c.restore();
+      const cs=counterSpan(); c.fillStyle='#5E6B78'; c.font='600 24px '+FB; c.textAlign='center';
+      c.fillText('มุมมอง 3D · ผนัง '+st.wallW+' ซม.'+(cs?' · เคาน์เตอร์ '+Math.round(cs.w)+' ซม.':''),PW/2,y+h+52); c.textAlign='left';
+      return y+h+80;
+    }
+    if(shot3d){
+      const lw=Math.round((PW-2*M)*0.56)-20, rw=PW-2*M-lw-40;
+      const end=await drawElevation(c,M,y+10,lw,drawH-120,ims);
+      const sc=Math.min(rw/shot3d.width,(drawH-40)/shot3d.height), w=shot3d.width*sc, h=shot3d.height*sc;
+      c.save(); rrect(c,M+lw+40,y+10,w,h,10); c.clip(); c.drawImage(shot3d,M+lw+40,y+10,w,h); c.restore();
+      c.fillStyle='#5E6B78'; c.font='600 22px '+FB; c.fillText('มุมมอง 3D',M+lw+40,y+h+44);
+      return Math.max(end,y+h+60)+20;
+    }
+    return (await drawElevation(c,M,y+10,PW-2*M,drawH-120,ims))+20;
+  };
+  if(!paged){
+    const H=HEADH+40+drawH+64+rows.length*RH+170;
+    const [cv,c]=newCanvas(H); let y=header(c,40,false); y=await drawBlock(c,y); y=tableHead(c,y); rows.forEach((r,i)=>{ y=row(c,y,r,i); }); footer(c,y);
+    // trim unused bottom
+    const out=document.createElement('canvas'); out.width=PW; out.height=Math.min(H,y+150); out.getContext('2d').drawImage(cv,0,0); return [out];
+  }
+  const pages=[]; let [cv,c]=newCanvas(PH); let y=header(c,40,false); y=await drawBlock(c,y); y=tableHead(c,y);
+  rows.forEach((r,i)=>{
+    if(y+RH>PH-60){ pages.push(cv); [cv,c]=newCanvas(PH); y=header(c,30,true); y=tableHead(c,y); }
+    y=row(c,y,r,i);
+  });
+  if(y+150>PH-20){ pages.push(cv); [cv,c]=newCanvas(PH); y=header(c,30,true); }
+  footer(c,y); pages.push(cv);
+  return pages;
+}
+const fname=ext=>'CABIN-kitchen-'+SMAP[st.series].name.replace(/\s+/g,'-')+'-'+new Date().toISOString().slice(0,10)+'.'+ext;
+const canvasBlob=(cv,type,q)=>new Promise(res=>cv.toBlob(res,type,q));
+function directDownload(name,blob){
+  const url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+}
+async function saveFile(name,blob){
+  if(!DL){ directDownload(name,blob); toast('ดาวน์โหลด '+name+' แล้ว'); return; }
+  try{ await DL.save({filename:name,data:blob}); toast('บันทึก '+name+' แล้ว'); }
+  catch(e){ const code=e&&e.code; toast(code==='declined'?'ยกเลิกการบันทึก':code==='rate_limited'?'มีหน้าต่างบันทึกเปิดอยู่ ลองอีกครั้งสักครู่':'บันทึกไฟล์ในหน้านี้ไม่ได้'); }
+}
+let busy=false;
+async function busyRun(btn,label,fn){ if(busy) return; busy=true; const t=btn.textContent; btn.textContent=label; btn.disabled=true; try{ await fn(); } catch(e){ toast('สร้างไฟล์ไม่สำเร็จ ลองอีกครั้ง'); } finally{ btn.textContent=t; btn.disabled=false; busy=false; } }
+$('pngBtn').addEventListener('click',()=>busyRun($('pngBtn'),'กำลังสร้างภาพ…',async()=>{
+  if(!counts().length&&!st.fx.length&&!st.up.length){ toast('ยังไม่มีสินค้าในครัว'); return; }
+  const [cv]=await buildSheets(false);
+  if(true){ await saveFile(fname('png'),await canvasBlob(cv,'image/png')); }
+  else { $('pvImg').src=cv.toDataURL('image/png'); $('pv').hidden=false; }
+}));
+$('pdfBtn').addEventListener('click',()=>busyRun($('pdfBtn'),'กำลังสร้าง PDF…',async()=>{
+  if(!counts().length&&!st.fx.length&&!st.up.length){ toast('ยังไม่มีสินค้าในครัว'); return; }
+  try{ if(!(window.jspdf&&window.jspdf.jsPDF)) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'); }
+  catch(e){ toast('สร้าง PDF ไม่ได้ตอนนี้ ลองบันทึกเป็น PNG แทน'); return; }
+  const pages=await buildSheets(true);
+  const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  pages.forEach((cv,i)=>{ if(i) doc.addPage('a4','landscape'); doc.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',0,0,297,210); });
+  await saveFile(fname('pdf'),doc.output('blob'));
+}));
+$('pvX').addEventListener('click',()=>{ $('pv').hidden=true; });
+$('pv').addEventListener('click',e=>{ if(e.target===$('pv')) $('pv').hidden=true; });
+
+function toast(t){ const el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('on'),2400); }
+function clampFx(){ const cs=counterSpan(); if(!cs) return; st.fx.forEach(r=>{ const w=FIX[r.a].w; r.x=Math.round(Math.min(cs.x1-w-2,Math.max(cs.x0+2,r.x))); }); }
+function commit(){ clampFx(); save(); render(); if(mode3d) build3d(); renderSel(); renderSeries(); renderTray(); renderColors(); renderList(); }
+
+new ResizeObserver(()=>render()).observe(stage);
+document.addEventListener('keydown',e=>{
+  if(!sel||/INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  const s2=e.shiftKey?10:1;
+  if(e.key==='ArrowLeft'){e.preventDefault();nudge(-s2,0);} else if(e.key==='ArrowRight'){e.preventDefault();nudge(s2,0);}
+  else if(e.key==='ArrowUp'){e.preventDefault();nudge(0,s2);} else if(e.key==='ArrowDown'){e.preventDefault();nudge(0,-s2);}
+  else if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault(); const f=find(sel); if(f){f.arr.splice(f.i,1); sel=null; commit();}}
+});
+commit();
+})();
+</script>
+</body>
+</html>
