@@ -208,6 +208,17 @@ textarea.fallback{width:100%;min-height:120px;font:12px var(--f-mono);border:1px
 .fx-drain{position:absolute;left:56%;width:38%;bottom:1.6px;height:1.4px;background:#C3C8CB}
 .fx-tbody{position:absolute;left:0;right:0;bottom:0;height:10px;border-top:1px solid #151617;background:radial-gradient(circle at 22% 55%,#2A2B2D 1.5px,transparent 2px),radial-gradient(circle at 50% 55%,#2A2B2D 1.5px,transparent 2px),radial-gradient(circle at 78% 55%,#2A2B2D 1.5px,transparent 2px),linear-gradient(#CFD3D6,#9AA0A4)}
 .fx-sup{position:absolute;bottom:2.4px;width:14%;height:1.6px;background:#2A2A2A}
+.it.shelf{box-shadow:0 3px 5px -2px rgba(0,0,0,.35);overflow:visible;min-height:2px}
+.sh-br{position:absolute;top:100%;width:2px;background:#8A9095;pointer-events:none}
+.sh-br::after{content:"";position:absolute;left:0;top:0;width:9px;height:2px;background:#8A9095;transform-origin:0 0;transform:rotate(55deg)}
+.shopt{display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%}
+.shc{width:26px;height:26px;border-radius:50%;border:1px solid rgba(0,0,0,.2);padding:0}
+.shc[aria-pressed="true"]{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--orange)}
+.shcolors{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.shc.lab{width:auto;height:auto;border-radius:16px;display:flex;align-items:center;gap:5px;padding:3px 9px 3px 3px;background:var(--bg);font-size:12px}
+.shc.lab i{width:18px;height:18px;border-radius:50%;border:1px solid rgba(0,0,0,.15);display:block}
+.seg2.sm button{padding:4px 9px;font-size:12px}
+.accbox{border:1px dashed var(--line);border-radius:10px;padding:10px}
 @media (max-width:900px){
   .selbar .ib{padding:5px 9px;font-size:12px}
   .dims{font-size:10px}
@@ -289,6 +300,15 @@ textarea.fallback{width:100%;min-height:120px;font:12px var(--f-mono);border:1px
         <div class="h3">ซิงก์และเตาบนท็อป</div>
         <div class="tray" id="trayF" style="margin-top:8px"></div>
       </div>
+      <div class="accbox">
+        <div class="h3">อุปกรณ์เสริม · แผ่นไม้เมลามีน (ใช้กับแขนรับชั้น)</div>
+        <div class="shcolors" id="melCols"></div>
+        <div class="tray" id="trayMel" style="margin-top:8px"></div>
+        <div class="h3" style="margin-top:14px">อุปกรณ์เสริม · แผ่นไม้ซ่อนขา หนา 5 ซม.</div>
+        <div class="shcolors" id="floCols"></div>
+        <div class="tray" id="trayFlo" style="margin-top:8px"></div>
+        <p class="note">แผ่นเมลามีนคิดแขนรับชั้นให้อัตโนมัติ ยาวไม่เกิน 80 ซม. ใช้ 2 อัน ยาว 120 ซม. ใช้ 3 อัน ลึก 30 ซม. เลือกแขน 20 หรือ 30 ซม. ได้ที่แถบด้านล่างภาพหลังเลือกชิ้น</p>
+      </div>
       <div>
         <div class="h3">ประตูและหน้าต่าง</div>
         <div class="tray" id="trayO" style="margin-top:8px"></div>
@@ -357,7 +377,7 @@ textarea.fallback{width:100%;min-height:120px;font:12px var(--f-mono);border:1px
 <div class="modal" id="pv" hidden><div class="mbox"><div class="mhead"><b>ภาพแผนครัว</b><button class="ib" type="button" id="pvX">ปิด</button></div><p class="note">กดค้างที่ภาพ (มือถือ) หรือคลิกขวา (คอมพิวเตอร์) แล้วเลือกบันทึกภาพ</p><img id="pvImg" alt="แผนครัวพร้อมรายการสินค้า"></div></div>
 
 <script>
-const ITEMS={"1103385":{"n":"กล่องแขวน","t":"box","w":35.0,"h":66.0,"sz":"35×34×66","up":true},"1103307":{"n":"ตู้แขวนคู่","t":"wall2","w":86.0,"h":66.0,"sz":"86×34×66","up":true},"1103392":{"n":"บานซิงค์คู่","t":"door2","w":84.0,"h":64.0,"sz":"84×64","up":false},"1103267":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":46.0,"h":66.0,"sz":"46×34×66","up":true},"1103308":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.0,"h":64.0,"sz":"44×64","up":false},"1103287":{"n":"ตู้แขวนคู่","t":"wall2","w":86.0,"h":41.0,"sz":"86×34×41","up":true},"1103358":{"n":"บานถังแก๊ส","t":"gas","w":49.5,"h":75.0,"sz":"49.5×75","up":false},"1103402":{"n":"ตู้ลิ้นชัก","t":"drawer","w":45.5,"h":65.5,"sz":"45.5×50×65.5","up":false},"1155385":{"n":"กล่องแขวน","t":"box","w":88.0,"h":25,"sz":"88×25×33.5","up":true},"1155424":{"n":"กล่องแขวน","t":"box","w":29.0,"h":67.5,"sz":"29×33.5×67.5","up":true},"1092601":{"n":"ตู้ลิ้นชัก","t":"drawer","w":46.0,"h":66.0,"sz":"46×48×66","up":false},"1104573":{"n":"ตู้แขวนคู่","t":"wall2","w":87.5,"h":67.5,"sz":"87.5×33.5×67.5","up":true},"1104644":{"n":"บานซิงค์คู่","t":"door2","w":84.0,"h":64.0,"sz":"84×64","up":false},"1104691":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":48.0,"h":67.5,"sz":"48×33.5×67.5","up":true},"1104520":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.0,"h":64.0,"sz":"44×64","up":false},"1104530":{"n":"บานถังแก๊ส","t":"gas","w":49.5,"h":75.0,"sz":"49.5×75","up":false},"1254232":{"n":"ตู้แขวนคู่","t":"wall2","w":80.0,"h":60.0,"sz":"80×35×60","up":true},"1254216":{"n":"บานซิงค์คู่","t":"door2","w":84.5,"h":64.5,"sz":"84.5×64.5","up":false},"1254226":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":40.0,"h":60.0,"sz":"40×35×60","up":true},"1254202":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.5,"h":64.5,"sz":"44.5×64.5","up":false},"1254225":{"n":"บานถังแก๊ส","t":"gas","w":54.0,"h":74.0,"sz":"54×74","up":false},"1254173":{"n":"ตู้ลิ้นชัก","t":"drawer","w":44.0,"h":64.0,"sz":"44×42.5×64","up":false},"1254749":{"n":"กล่องแขวน","t":"box","w":80.0,"h":35.0,"sz":"80×35×35","up":true},"1254169":{"n":"กล่องแขวน","t":"box","w":80.0,"h":25.0,"sz":"80×33×25","up":true},"1271715":{"n":"ตู้แขวนคู่","t":"wall2","w":88.0,"h":67.5,"sz":"88×33.7×67.5","up":true},"1270826":{"n":"บานซิงค์คู่","t":"door2","w":84.0,"h":64.0,"sz":"84×64","up":false},"1272842":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":48.0,"h":67.5,"sz":"48×33.8×67.5","up":true},"1270827":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.3,"h":64.0,"sz":"44.3×64","up":false},"1271716":{"n":"บานถังแก๊ส","t":"gas","w":49.8,"h":75.0,"sz":"49.8×75","up":false},"1297766":{"n":"ตู้แขวนคู่","t":"wall2","w":87.8,"h":67.5,"sz":"87.8×33.8×67.5","up":true},"1297767":{"n":"บานซิงค์คู่","t":"door2","w":84.0,"h":64.0,"sz":"84×64","up":false},"1297782":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":48.0,"h":67.5,"sz":"48×33.8×67.5","up":true},"1297791":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.0,"h":64.0,"sz":"44×64","up":false},"1297771":{"n":"บานถังแก๊ส","t":"gas","w":49.5,"h":75.0,"sz":"49.5×75","up":false},"1297720":{"n":"ตู้ลิ้นชัก","t":"drawer","w":45.5,"h":65.5,"sz":"45.5×50.5×65.5","up":false},"1233339":{"n":"ตู้แขวนคู่","t":"wall2","w":90.0,"h":67.8,"sz":"90×34×67.8","up":true},"1233324":{"n":"บานซิงค์คู่","t":"door2","w":96.0,"h":68.8,"sz":"96×68.8","up":false},"1233356":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":45.0,"h":67.8,"sz":"45×34×67.8","up":true},"1233125":{"n":"บานซิงค์เดี่ยว","t":"door1","w":50.8,"h":68.8,"sz":"50.8×68.8","up":false},"1233333":{"n":"ตู้ไมโครเวฟ","t":"micro","w":60.0,"h":42.0,"sz":"60×42×42","up":true},"1233343":{"n":"บานถังแก๊ส","t":"gas","w":46.0,"h":66.0,"sz":"46×48×66","up":false},"1233386":{"n":"ตู้ลิ้นชัก","t":"drawer","w":49.0,"h":68.8,"sz":"49×54.5×68.8","up":false},"1268619":{"n":"บานซิงค์คู่","t":"door2","w":96.0,"h":68.8,"sz":"96×68.8","up":false},"1160369":{"n":"ตู้แขวนคู่","t":"wall2","w":91.0,"h":70.0,"sz":"91×36×70","up":true},"1159829":{"n":"บานซิงค์คู่","t":"door2","w":96.0,"h":68.8,"sz":"96×68.8","up":false},"1160416":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":45.8,"h":69.0,"sz":"45.8×35.5×69","up":true},"1160011":{"n":"บานซิงค์เดี่ยว","t":"door1","w":50.8,"h":68.8,"sz":"50.8×68.8","up":false},"1160136":{"n":"ตู้แขวนคู่","t":"wall2","w":90.0,"h":94.0,"sz":"90×34×94","up":true},"1160138":{"n":"ตู้แขวนเสริม","t":"box","w":90.0,"h":42.0,"sz":"90×30×42","up":true},"1159897":{"n":"บานถังแก๊ส","t":"gas","w":50.8,"h":73.6,"sz":"50.8×73.6","up":false},"1160386":{"n":"ตู้ลิ้นชัก","t":"drawer","w":49.0,"h":68.8,"sz":"49×54.5×68.8","up":false},"1160456":{"n":"กล่องจบมุม","t":"box","w":32.0,"h":67.8,"sz":"32×34.5×67.8","up":true},"1159880":{"n":"บานคู่ใต้เตา","t":"door2","w":81.6,"h":61.8,"sz":"81.6×61.8","up":false},"1160339":{"n":"ตู้ไมโครเวฟ","t":"micro","w":60.0,"h":42.0,"sz":"60×34×42","up":true},"1160002":{"n":"บานเดี่ยวใต้เตา","t":"door1","w":43.8,"h":61.8,"sz":"43.8×61.8","up":false},"1160501":{"n":"กล่องแขวน","t":"box","w":60.0,"h":26.0,"sz":"60×34×26","up":true},"1160600":{"n":"กล่องแขวน","t":"box","w":90.0,"h":26.0,"sz":"90×34×26","up":true},"1160338":{"n":"กล่องแขวน","t":"box","w":25.0,"h":67.8,"sz":"25×34×67.8","up":true},"1189321":{"n":"ตู้ลิ้นชัก","t":"drawer","w":54.4,"h":68.0,"sz":"54.4×49×68","up":false},"1281473":{"n":"ตู้แขวนคู่","t":"wall2","w":80.0,"h":60.0,"sz":"80×31.9×60","up":true},"1281404":{"n":"บานซิงค์คู่","t":"door2","w":86.0,"h":66.0,"sz":"86×66","up":false},"1281431":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":40.0,"h":60.0,"sz":"40×31.9×60","up":true},"1281450":{"n":"บานซิงค์เดี่ยว","t":"door1","w":46.0,"h":66.0,"sz":"46×66","up":false},"1281419":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":60.0,"h":60.0,"sz":"60×31.9×60","up":true},"1281442":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":60.0,"h":60.0,"sz":"60×31.95×60","up":true},"1281406":{"n":"บานถังแก๊ส","t":"gas","w":56.0,"h":74.0,"sz":"56×74","up":false},"1281373":{"n":"ตู้ลิ้นชัก","t":"drawer","w":46.0,"h":66.0,"sz":"46×55.5×66","up":false},"1221091":{"n":"ตู้แขวนคู่","t":"wall2","w":80.0,"h":60.0,"sz":"80×34.5×60","up":true},"1210321":{"n":"บานซิงค์คู่","t":"door2","w":86.0,"h":66.0,"sz":"86×66","up":false},"1221020":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":40.0,"h":60.0,"sz":"40×34.5×60","up":true},"1210332":{"n":"บานซิงค์เดี่ยว","t":"door1","w":46.0,"h":66.0,"sz":"46×66","up":false},"1221084":{"n":"ตู้แขวนคู่","t":"wall2","w":80.0,"h":40.0,"sz":"80×34.5×40","up":true},"1221417":{"n":"กล่องแขวน","t":"box","w":30.0,"h":60.0,"sz":"30×30×60","up":true},"1209865":{"n":"บานถังแก๊ส","t":"gas","w":56.0,"h":74.0,"sz":"56×74","up":false},"1266448":{"n":"ตู้ลิ้นชัก","t":"drawer","w":46.0,"h":66.0,"sz":"46×55.5×66","up":false}};
+const ITEMS={"1103385":{"n":"กล่องแขวน","t":"box","w":35.0,"h":66.0,"sz":"35×66×34","up":true},"1103307":{"n":"ตู้แขวนคู่","t":"wall2","w":86.0,"h":66.0,"sz":"86×66×34","up":true},"1103392":{"n":"บานซิงค์คู่","t":"door2","w":84.0,"h":64.0,"sz":"84×64","up":false},"1103267":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":46.0,"h":66.0,"sz":"46×66×34","up":true},"1103308":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.0,"h":64.0,"sz":"44×64","up":false},"1103287":{"n":"ตู้แขวนคู่","t":"wall2","w":86.0,"h":41.0,"sz":"86×41×34","up":true},"1103358":{"n":"บานถังแก๊ส","t":"gas","w":49.5,"h":75.0,"sz":"49.5×75","up":false},"1103402":{"n":"ตู้ลิ้นชัก","t":"drawer","w":45.5,"h":65.5,"sz":"45.5×65.5×50","up":false},"1155385":{"n":"กล่องแขวน","t":"box","w":88.0,"h":25.0,"sz":"88×25×33.5","up":true},"1155424":{"n":"กล่องแขวน","t":"box","w":29.0,"h":67.5,"sz":"29×67.5×33.5","up":true},"1092601":{"n":"ตู้ลิ้นชัก","t":"drawer","w":46.0,"h":66.0,"sz":"46×66×48","up":false},"1104573":{"n":"ตู้แขวนคู่","t":"wall2","w":87.5,"h":67.5,"sz":"87.5×67.5×33.5","up":true},"1104644":{"n":"บานซิงค์คู่","t":"door2","w":84.0,"h":64.0,"sz":"84×64","up":false},"1104691":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":48.0,"h":67.5,"sz":"48×67.5×33.5","up":true},"1104520":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.0,"h":64.0,"sz":"44×64","up":false},"1104530":{"n":"บานถังแก๊ส","t":"gas","w":49.5,"h":75.0,"sz":"49.5×75","up":false},"1254232":{"n":"ตู้แขวนคู่","t":"wall2","w":80.0,"h":60.0,"sz":"80×60×35","up":true},"1254216":{"n":"บานซิงค์คู่","t":"door2","w":84.5,"h":64.5,"sz":"84.5×64.5","up":false},"1254226":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":40.0,"h":60.0,"sz":"40×60×35","up":true},"1254202":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.5,"h":64.5,"sz":"44.5×64.5","up":false},"1254225":{"n":"บานถังแก๊ส","t":"gas","w":54.0,"h":74.0,"sz":"54×74","up":false},"1254173":{"n":"ตู้ลิ้นชัก","t":"drawer","w":44.0,"h":64.0,"sz":"44×64×42.5","up":false},"1254749":{"n":"กล่องแขวน","t":"box","w":80.0,"h":35.0,"sz":"80×35×35","up":true},"1254169":{"n":"กล่องแขวน","t":"box","w":80.0,"h":25.0,"sz":"80×25×33","up":true},"1271715":{"n":"ตู้แขวนคู่","t":"wall2","w":88.0,"h":67.5,"sz":"88×67.5×33.7","up":true},"1270826":{"n":"บานซิงค์คู่","t":"door2","w":84.0,"h":64.0,"sz":"84×64","up":false},"1272842":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":48.0,"h":67.5,"sz":"48×67.5×33.7","up":true},"1270827":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.3,"h":64.0,"sz":"44.3×64","up":false},"1271716":{"n":"บานถังแก๊ส","t":"gas","w":49.8,"h":75.0,"sz":"49.8×75","up":false},"1297766":{"n":"ตู้แขวนคู่","t":"wall2","w":87.8,"h":67.5,"sz":"87.8×67.5×33.8","up":true},"1297767":{"n":"บานซิงค์คู่","t":"door2","w":84.0,"h":64.0,"sz":"84×64","up":false},"1297782":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":48.0,"h":67.5,"sz":"48×67.5×33.8","up":true},"1297791":{"n":"บานซิงค์เดี่ยว","t":"door1","w":44.0,"h":64.0,"sz":"44×64","up":false},"1297771":{"n":"บานถังแก๊ส","t":"gas","w":49.5,"h":75.0,"sz":"49.5×75","up":false},"1297720":{"n":"ตู้ลิ้นชัก","t":"drawer","w":45.5,"h":65.5,"sz":"45.5×65.5×50.5","up":false},"1233339":{"n":"ตู้แขวนคู่","t":"wall2","w":90.0,"h":67.8,"sz":"90×67.8×34","up":true},"1233324":{"n":"บานซิงค์คู่","t":"door2","w":96.0,"h":68.8,"sz":"96×68.8","up":false},"1233356":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":45.0,"h":67.8,"sz":"45×67.8×34","up":true},"1233125":{"n":"บานซิงค์เดี่ยว","t":"door1","w":50.8,"h":68.8,"sz":"50.8×68.8","up":false},"1233333":{"n":"ตู้ไมโครเวฟ","t":"micro","w":60.0,"h":42.0,"sz":"60×42×42","up":true},"1233343":{"n":"บานถังแก๊ส","t":"gas","w":50.8,"h":73.6,"sz":"50.8×73.6","up":false},"1233386":{"n":"ตู้ลิ้นชัก","t":"drawer","w":49.0,"h":68.0,"sz":"49×68×54.5","up":false},"1268619":{"n":"บานซิงค์คู่","t":"door2","w":96.0,"h":68.8,"sz":"96×68.8","up":false},"1160369":{"n":"ตู้แขวนคู่","t":"wall2","w":91.0,"h":67.8,"sz":"91×67.8×35.5","up":true},"1159829":{"n":"บานซิงค์คู่","t":"door2","w":96.0,"h":68.8,"sz":"96×68.8","up":false},"1160416":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":45.8,"h":67.8,"sz":"45.8×67.8×35.5","up":true},"1160011":{"n":"บานซิงค์เดี่ยว","t":"door1","w":50.8,"h":68.8,"sz":"50.8×68.8","up":false},"1160136":{"n":"ตู้แขวนคู่","t":"wall2","w":90.0,"h":94.0,"sz":"90×94×35.5","up":true},"1160138":{"n":"ตู้แขวนเสริม","t":"box","w":90.0,"h":42.0,"sz":"90×42×30","up":true},"1159897":{"n":"บานถังแก๊ส","t":"gas","w":50.8,"h":73.6,"sz":"50.8×73.6","up":false},"1160386":{"n":"ตู้ลิ้นชัก","t":"drawer","w":49.0,"h":68.8,"sz":"49×68.8×54.5","up":false},"1160456":{"n":"กล่องจบมุม","t":"box","w":32.0,"h":67.8,"sz":"32×67.8×34","up":true},"1159880":{"n":"บานคู่ใต้เตา","t":"door2","w":81.6,"h":61.8,"sz":"81.6×61.8","up":false},"1160339":{"n":"ตู้ไมโครเวฟ","t":"micro","w":60.0,"h":42.0,"sz":"60×42×34","up":true},"1160002":{"n":"บานเดี่ยวใต้เตา","t":"door1","w":43.8,"h":61.8,"sz":"43.8×61.8","up":false},"1160501":{"n":"กล่องแขวน","t":"box","w":60.0,"h":26.0,"sz":"60×26×34","up":true},"1160600":{"n":"กล่องแขวน","t":"box","w":90.0,"h":26.0,"sz":"90×26×34","up":true},"1160338":{"n":"กล่องแขวน","t":"box","w":25.0,"h":67.8,"sz":"25×67.8×34","up":true},"1189321":{"n":"ตู้ลิ้นชัก","t":"drawer","w":54.4,"h":68.0,"sz":"54.4×68×49","up":false},"1281473":{"n":"ตู้แขวนคู่","t":"wall2","w":80.0,"h":60.0,"sz":"80×60×31.9","up":true},"1281404":{"n":"บานซิงค์คู่","t":"door2","w":86.0,"h":66.0,"sz":"86×66","up":false},"1281431":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":40.0,"h":60.0,"sz":"40×60×31.9","up":true},"1281450":{"n":"บานซิงค์เดี่ยว","t":"door1","w":46.0,"h":66.0,"sz":"46×66","up":false},"1281419":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":60.0,"h":60.0,"sz":"60×60×31.9","up":true},"1281442":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":60.0,"h":60.0,"sz":"60×60×31.9","up":true},"1281406":{"n":"บานถังแก๊ส","t":"gas","w":56.0,"h":74.0,"sz":"56×74","up":false},"1281373":{"n":"ตู้ลิ้นชัก","t":"drawer","w":46.0,"h":66.0,"sz":"46×66×55.5","up":false},"1221091":{"n":"ตู้แขวนคู่","t":"wall2","w":80.0,"h":60.0,"sz":"80×60×34.5","up":true},"1210321":{"n":"บานซิงค์คู่","t":"door2","w":86.0,"h":66.0,"sz":"86×66","up":false},"1221020":{"n":"ตู้แขวนเดี่ยว","t":"wall1","w":40.0,"h":60.0,"sz":"40×60×34.5","up":true},"1210332":{"n":"บานซิงค์เดี่ยว","t":"door1","w":46.0,"h":66.0,"sz":"46×66","up":false},"1221084":{"n":"ตู้แขวนคู่","t":"wall2","w":80.0,"h":40.0,"sz":"80×40×34.5","up":true},"1221417":{"n":"กล่องแขวน","t":"box","w":30.0,"h":60.0,"sz":"30×60×30","up":true},"1209865":{"n":"บานถังแก๊ส","t":"gas","w":56.0,"h":74.0,"sz":"56×74","up":false},"1266448":{"n":"ตู้ลิ้นชัก","t":"drawer","w":46.0,"h":66.0,"sz":"46×66×55.5","up":false}};
 const SERIES=[{"id":"chic","name":"CHIC","mat":"UPVC","col":"#8B8781","tone":"ลายไม้เทา ขอบดำ","room":"img/room-chic.jpg","arts":["1103385","1103307","1103392","1103267","1103308","1103287","1103358","1103402"]},{"id":"g6","name":"G6","mat":"PP","col":"#F3F2EE","tone":"ขาว","room":"img/room-g6.jpg","arts":["1155385","1155424","1092601","1104573","1104644","1104691","1104520","1104530"]},{"id":"juno","name":"JUNO","mat":"UPVC","col":"#C8A57D","tone":"ลายไม้โอ๊กอ่อน","room":"img/room-juno.jpg","arts":["1254232","1254216","1254226","1254202","1254225","1254173","1254749","1254169"]},{"id":"henley","name":"HENLEY","mat":"PP","col":"#F6F6F4","tone":"ขาว","room":"img/room-henley.jpg","arts":["1271715","1270826","1272842","1270827","1271716","1092601","1155385","1155424"]},{"id":"hollyn","name":"HOLLYN","mat":"ABS","col":"#D5CBB3","tone":"ครีมเบจ","room":"img/room-hollyn.jpg","arts":["1297766","1297767","1297782","1297791","1297771","1297720"]},{"id":"pearl-pistachio","name":"PEARL PISTACHIO","mat":"HIPS","col":"#8FAD89","tone":"เขียวพิสตาชิโอ","room":"img/room-pearl-pistachio.jpg","arts":["1233339","1233324","1233356","1233125","1233333","1233343","1233386","1268619"]},{"id":"curve-gray","name":"CURVE GRAY","mat":"HIPS","col":"#46484B","tone":"เทาเข้ม ขอบโครเมียม","room":"img/room-curve-gray.jpg","arts":["1160369","1159829","1160416","1160011","1160136","1160138","1159897","1160386","1160456","1159880","1160339","1160002","1160501","1160600","1160338","1189321"]},{"id":"curve-diamond","name":"CURVE DIAMOND","mat":"Honeycomb","col":"#EDEDEB","tone":"ขาวเงา","room":"img/room-curve-diamond.jpg","arts":["1281473","1281404","1281431","1281450","1281419","1281442","1281406","1281373"]},{"id":"lucida-dark-oak","name":"LUCIDA DARK OAK","mat":"MDF","col":"#202020","tone":"ดำลายไม้","room":"img/room-lucida-dark-oak.jpg","arts":["1221091","1210321","1221020","1210332","1221084","1221417","1209865","1266448"]}];
 
 (function(){
@@ -379,7 +399,16 @@ const OPS={
   DOOR80:{n:'ประตู',t:'door',w:80,h:200,y0:0,op:true,sz:'80×200'},
   SLIDE160:{n:'ประตูกระจกบานเลื่อน',t:'slide',w:160,h:210,y0:0,op:true,sz:'160×210'}
 };
-const item=a=>ITEMS[a]||HOODS[a]||FIX[a]||OPS[a];
+const MELC={white:['ขาว','#F4F4F2'],columbus:['โคลัมบัส','#C2BCB3'],elalin:['ขาวเอลอลิน','#ECE7DE'],walnut:['วอลนัท','#6E4A33'],robar:['ไลท์โรบา','#D9C3A5'],oak:['โอ๊ค','#CDAE85'],teak:['วินเทจทีค','#A9784A'],dwalnut:['ดาร์ควอลนัท','#4A3226']};
+const FLOC={white:['ขาว','#F2F2F0'],loak:['ไลท์โอ๊ค','#D4B48A'],teak:['วินเทจทีค','#A9784A']};
+const SHELF={};
+[[20,[60,80,120]],[30,[60,80,120]],[40,[60,80]]].forEach(([d,ws])=>ws.forEach(w=>{ SHELF['SM'+d+'-'+w]={n:'แผ่นไม้เมลามีน',k:'mel',t:'shelf',w,h:1.6,d,up:true,sh:true,sz:d+'×'+w+'×1.6',br:d===20?[20]:d===30?[20,30]:[30]}; }));
+[40,60,80,120,160,180].forEach(w=>{ SHELF['SF24-'+w]={n:'แผ่นไม้ซ่อนขา',k:'flo',t:'shelf',w,h:5,d:24,up:true,sh:true,sz:'24×'+w+'×5'}; });
+const shColors=it=>it.k==='mel'?MELC:FLOC;
+const shCol=(r,it)=>{ const P=shColors(it); return P[r.c]||P.white; };
+const brLen=(r,it)=>it.br?(it.br.includes(r.b)?r.b:it.br[it.br.length-1]):0;
+const brQty=it=>it.br?(it.w>=120?3:2):0;
+const item=a=>ITEMS[a]||HOODS[a]||FIX[a]||OPS[a]||SHELF[a];
 const img=a=>'img/'+a+'.webp';
 const PAL={
   wall:['#EFEDE8','#F7F4EC','#D9D6CF','#C9CBCC','#C0C8B9','#C9D6DD','#E6D3C0','#3E4246'],
@@ -392,7 +421,7 @@ const PRESETS=[
   {n:'ครัวมาตรฐาน ~2.4 ม.',lo:['drawer','door2','door1','gas'],up:['wall1','wall2','HOOD60','wall1']},
   {n:'ครัวยาว ~3.2 ม.',lo:['door1','door2','drawer','gas','door2'],up:['wall1','wall2','box','HOOD90','wall2']}
 ];
-const ROWS=['op','up','lo','fx'];
+const ROWS=['op','sh','up','lo','fx'];
 const PIL=7, PLINTH=8, TOP=90, SLAB=5, UPTOP=215, WALLH=250, SIDE=25, SNAP=5;
 
 const uid=()=>Math.random().toString(36).slice(2,9);
@@ -403,9 +432,9 @@ const LAYOUT_WALLS={I:['back'],L:['left','back'],U:['left','back','right']};
 const CORNER=60;
 const SER_NAMES={}; SERIES.forEach(sr=>sr.arts.forEach(a=>{ (SER_NAMES[a]=SER_NAMES[a]||[]).push(sr.name); }));
 const serOf=a=>(SER_NAMES[a]||[]).join(' / ');
-const emptyWall=w=>({w,up:[],lo:[],fx:[],op:[],cx:0,cw:0});
+const emptyWall=w=>({w,up:[],lo:[],fx:[],op:[],sh:[],cx:0,cw:0});
 function bindWallProps(o){
-  [['wallW','w'],['up','up'],['lo','lo'],['fx','fx'],['op','op'],['cx','cx'],['cw','cw']].forEach(([pp,q])=>Object.defineProperty(o,pp,{configurable:true,enumerable:false,get(){return o.walls[o.wall][q];},set(v){o.walls[o.wall][q]=v;}}));
+  [['wallW','w'],['up','up'],['lo','lo'],['fx','fx'],['op','op'],['sh','sh'],['cx','cx'],['cw','cw']].forEach(([pp,q])=>Object.defineProperty(o,pp,{configurable:true,enumerable:false,get(){return o.walls[o.wall][q];},set(v){o.walls[o.wall][q]=v;}}));
   return o;
 }
 const activeWalls=()=>LAYOUT_WALLS[st.layout];
@@ -417,13 +446,14 @@ function corners(k2,o){ o=o||st; const L=LAYOUT_WALLS[o.layout];
   if(k2==='left') return {l:false,r:true};
   return {l:true,r:false}; }
 const upY=it=>UPTOP-it.h;           // default bottom of a wall piece
-const homeY=it=>it.op?it.y0:(it.up?upY(it):PLINTH);
+const homeY=it=>it.op?it.y0:it.sh?125:(it.up?upY(it):PLINTH);
 
-function pick(seriesId,type,targetW){
+function pick(seriesId,type,targetW,targetH){
   const arts=SMAP[seriesId].arts.filter(a=>ITEMS[a].t===type);
   if(!arts.length) return null;
   if(targetW==null) return arts[0];
-  return arts.slice().sort((a,b)=>Math.abs(ITEMS[a].w-targetW)-Math.abs(ITEMS[b].w-targetW))[0];
+  const cost=a=>Math.abs(ITEMS[a].w-targetW)+(targetH==null?0:Math.abs(ITEMS[a].h-targetH)*0.6);
+  return arts.slice().sort((a,b)=>cost(a)-cost(b))[0];
 }
 function applyPreset(s,p){
   const lo=p.lo.map(t=>pick(s.series,t)).filter(Boolean);
@@ -446,7 +476,7 @@ function applyPreset(s,p){
 }
 const SIDE_PRESET={lo:['drawer','door1'],up:['wall1','wall1'],noFx:true};
 function defaults(){
-  const s=bindWallProps({series:'juno',layout:'I',wall:'back',walls:{left:emptyWall(240),back:emptyWall(300),right:emptyWall(240)},wallC:PAL.wall[0],bodyC:PAL.body[0],topC:PAL.top[0],floorC:PAL.floor[0],expView:'both'});
+  const s=bindWallProps({melC:'oak',floC:'white',series:'juno',layout:'I',wall:'back',walls:{left:emptyWall(240),back:emptyWall(300),right:emptyWall(240)},wallC:PAL.wall[0],bodyC:PAL.body[0],topC:PAL.top[0],floorC:PAL.floor[0],expView:'both'});
   applyPreset(s,PRESETS[1]); return s;
 }
 let st=null;
@@ -461,7 +491,7 @@ const isHex=v=>/^#[0-9a-f]{6}$/i.test(v||'');
 if(st){
   WALLS.forEach(k2=>{ const w=st.walls[k2]&&typeof st.walls[k2]==='object'?st.walls[k2]:emptyWall(k2==='back'?300:240);
     w.w=Math.min(600,Math.max(120,+w.w||(k2==='back'?300:240)));
-    ['up','lo','fx','op'].forEach(row=>{ w[row]=(Array.isArray(w[row])?w[row]:[]).filter(r=>r&&item(r.a)&&isFinite(r.x)&&(row==='fx'?FIX[r.a]:isFinite(r.y))); });
+    ['up','lo','fx','op','sh'].forEach(row=>{ w[row]=(Array.isArray(w[row])?w[row]:[]).filter(r=>r&&item(r.a)&&isFinite(r.x)&&(row==='fx'?FIX[r.a]:isFinite(r.y))); });
     if(!isFinite(w.cx)||!isFinite(w.cw)){ w.cx=0; w.cw=0; w.needFit=true; }
     st.walls[k2]=w; });
   if(!LAYOUT_WALLS[st.layout]) st.layout='I';
@@ -480,7 +510,7 @@ function shade(hex,amt){ const n=parseInt(hex.slice(1),16); let r=n>>16,g=n>>8&2
 function lum(hex){ const n=parseInt(hex.slice(1),16); return (0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255; }
 
 /* ---------- geometry ---------- */
-const all=()=>[...st.op.map(r=>({r,row:'op'})),...st.lo.map(r=>({r,row:'lo'})),...st.up.map(r=>({r,row:'up'})),...st.fx.map(r=>({r,row:'fx'}))];
+const all=()=>[...st.op.map(r=>({r,row:'op'})),...st.sh.map(r=>({r,row:'sh'})),...st.lo.map(r=>({r,row:'lo'})),...st.up.map(r=>({r,row:'up'})),...st.fx.map(r=>({r,row:'fx'}))];
 function counterSpan(){ return st.cw>0?{x0:st.cx,x1:st.cx+st.cw,w:st.cw}:null; }
 function fitCounter(){
   const base=st.lo.filter(r=>r.y<=PLINTH+3);
@@ -530,6 +560,9 @@ function itemHTML(r,row){
   if(it.t==='hob'){ const pb=it.v==='t'?'bottom:11px':'';
     return '<div class="'+cls+'" data-u="'+r.u+'" style="'+pos+'"><div class="fx-pot" style="left:10%;'+pb+'"></div><div class="fx-pot sm" style="right:14%;'+pb+'"></div>'+
       (it.v==='t'?'<div class="fx-tbody"></div>':'<div class="fx-glass"></div>'+(it.v==='g'?'<div class="fx-sup" style="left:8%"></div><div class="fx-sup" style="left:43%"></div><div class="fx-sup" style="right:8%"></div>':''))+'</div>'; }
+  if(it.t==='shelf'){ const col=shCol(r,it)[1], bl=brLen(r,it);
+    const brk=it.br?[8,it.w-10].concat(it.w>=120?[it.w/2-1]:[]).map(x=>'<i class="sh-br" style="left:'+x+'px;height:'+Math.round(bl*0.55)+'px"></i>').join(''):'';
+    return '<div class="'+cls+' shelf" data-u="'+r.u+'" style="'+pos+';background:'+col+'">'+brk+'</div>'; }
   if(it.t==='win') return '<div class="'+cls+' op-win" data-u="'+r.u+'" style="'+pos+'"><i></i><b></b></div>';
   if(it.t==='door') return '<div class="'+cls+' op-door" data-u="'+r.u+'" style="'+pos+'"><i></i></div>';
   if(it.t==='slide') return '<div class="'+cls+' op-slide" data-u="'+r.u+'" style="'+pos+'"><i></i><i></i></div>';
@@ -606,9 +639,14 @@ function renderSel(){
   if(mode3d){ bar.innerHTML='<span class="hint">ลากเพื่อหมุนรอบห้อง ถ่างนิ้วหรือเลื่อนล้อเมาส์เพื่อซูม กด "3D" อีกครั้งเพื่อกลับมุมเริ่มต้น การย้ายชิ้นทำในโหมดหน้าตรง</span>'; return; }
   if(!f){ bar.innerHTML='<span class="hint">แตะชิ้นเพื่อเลือก ลากไปวางตรงไหนก็ได้บนผนัง</span>'; return; }
   const r=f.arr[f.i], a=r.a, it=item(a);
-  bar.innerHTML=(ITEMS[a]?'<img src="'+img(a)+'" alt="">':'')+'<div class="txt"><div class="nm">'+(it.t==='hood'?'ช่องเครื่องดูดควัน '+it.w+' ซม.':it.op?it.n+' '+it.sz+' ซม.':it.n)+(ITEMS[a]?' <span class="sertag">'+serOf(a)+'</span>':'')+'</div><div class="mt">'+(ITEMS[a]?'Article '+a+' · ':'')+'ห่างขอบซ้าย '+r.x+(it.fx?'':' · สูงจากพื้น '+r.y)+' ซม.</div></div>'+
+  bar.innerHTML=(ITEMS[a]?'<img src="'+img(a)+'" alt="">':'')+'<div class="txt"><div class="nm">'+(it.t==='hood'?'ช่องเครื่องดูดควัน '+it.w+' ซม.':it.op?it.n+' '+it.sz+' ซม.':it.sh?it.n+' '+it.sz+' ซม. · '+shCol(r,it)[0]+(it.br?' · แขนรับชั้น '+brLen(r,it)+' ซม. ×'+brQty(it):''):it.n)+(ITEMS[a]?' <span class="sertag">'+serOf(a)+'</span>':'')+'</div><div class="mt">'+(ITEMS[a]?'Article '+a+' · ':'')+'ห่างขอบซ้าย '+r.x+(it.fx?'':' · สูงจากพื้น '+r.y)+' ซม.</div></div>'+
     '<div class="btnrow"><button class="ib" type="button" data-n="-5,0" aria-label="เลื่อนซ้าย">◀</button><button class="ib" type="button" data-n="5,0" aria-label="เลื่อนขวา">▶</button>'+(it.fx?'':'<button class="ib" type="button" data-n="0,5" aria-label="เลื่อนขึ้น">▲</button><button class="ib" type="button" data-n="0,-5" aria-label="เลื่อนลง">▼</button><button class="ib" type="button" id="sH">เข้าแนวมาตรฐาน</button>')+'<button class="ib" type="button" id="sC">ทำซ้ำ</button><button class="ib del" type="button" id="sD">ลบ</button></div>';
   bar.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{ const [dx,dy]=b.dataset.n.split(',').map(Number); nudge(dx,dy); });
+  if(it.sh){ const P=shColors(it);
+    bar.insertAdjacentHTML('beforeend','<div class="shopt">'+Object.entries(P).map(([k2,v])=>'<button type="button" class="shc" data-c="'+k2+'" title="'+v[0]+'" aria-label="สี '+v[0]+'" aria-pressed="'+(shCol(r,it)===v)+'" style="background:'+v[1]+'"></button>').join('')+
+      (it.br&&it.br.length>1?'<span class="seg2 sm">'+it.br.map(b=>'<button type="button" data-b="'+b+'" aria-pressed="'+(brLen(r,it)===b)+'">แขน '+b+'</button>').join('')+'</span>':'')+'</div>');
+    bar.querySelectorAll('.shc').forEach(b=>b.onclick=()=>{ r.c=b.dataset.c; if(it.k==='mel') st.melC=r.c; else st.floC=r.c; commit(); });
+    bar.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{ r.b=+b.dataset.b; commit(); }); }
   if($('sH')) $('sH').onclick=()=>{ const f2=find(sel); if(!f2) return; const r2=f2.arr[f2.i]; r2.y=homeY(item(r2.a)); commit(); };
   $('sC').onclick=()=>{ const f2=find(sel); if(!f2) return; const r2=f2.arr[f2.i]; const n={u:uid(),a:r2.a,...place(r2.a,r2)}; f2.arr.push(n); sel=n.u; commit(); };
   $('sD').onclick=()=>{ const f2=find(sel); if(!f2) return; f2.arr.splice(f2.i,1); sel=null; commit(); };
@@ -630,6 +668,15 @@ function place(a,after){
     if(x==null) for(let c=lo0;c+it.w<=hi0;c+=5){ if(free(c)){ x=c; break; } }
     if(x==null){ x=clamp((lo0+hi0-it.w)/2); toast('ท็อปเคาน์เตอร์เต็ม วางซ้อนไว้ก่อน ขยายเคาน์เตอร์ได้ที่แท็บ ห้องและสี'); }
     return {x:Math.round(x),y:TOP}; }
+  if(SHELF[a]){ const it=SHELF[a], drop=it.br?Math.max(...it.br)*0.55+2:3;
+    const boxes=[...st.up,...st.op,...st.sh].map(r=>{ const o=item(r.a); return {x0:r.x,x1:r.x+o.w,y0:r.y-(o.sh&&o.br?brLen(r,o)*0.55:0),y1:r.y+o.h}; });
+    const cs=counterSpan(), floorY=cs?TOP:0;
+    const ok=(x,y)=>x>=0&&x+it.w<=st.wallW&&y-drop>=floorY+12&&y+it.h+30<=WALLH&&!boxes.some(b=>x<b.x1+4&&x+it.w+4>b.x0&&y-drop<b.y1+28&&y+it.h+28>b.y0);
+    const ys=[125,160,195,105];
+    const xs=[]; if(after) xs.push(after.x); for(let x=Math.round((st.wallW-it.w)/2),d=0;d<=st.wallW;d+=5){ xs.push(x+d,x-d); }
+    for(const y of (after?[after.y+35,after.y-35,...ys]:ys)) for(const x of xs) if(ok(x,y)) return {x:Math.round(x),y:Math.round(y)};
+    toast('ผนังเต็ม วางซ้อนไว้ก่อน ลากไปตำแหน่งที่ต้องการได้');
+    return {x:Math.round(Math.max(0,(st.wallW-it.w)/2)),y:125}; }
   const it=item(a), row=it.op?'op':(it.up?'up':'lo'), gap=(it.up||it.op)?0:PIL, y=homeY(it);
   const same=row==='op'?[]:st[row].filter(r=>row==='up'||r.y<=PLINTH+3);
   const cz=corners(st.wall), lim0=(row==='lo'&&cz.l)?CORNER:0, lim1=st.wallW-((row==='lo'&&cz.r)?CORNER:0);
@@ -645,10 +692,11 @@ function place(a,after){
   return {x:Math.round(x),y};
 }
 function add(a){
-  const it=item(a), row=it.op?'op':(it.fx?'fx':(it.up?'up':'lo'));
+  const it=item(a), row=it.sh?'sh':it.op?'op':(it.fx?'fx':(it.up?'up':'lo'));
   if(it.fx&&!counterSpan()){ fitCounter(); if(!counterSpan()){ st.cx=Math.round(st.wallW/2-60); st.cw=120; } }
   const f=sel&&find(sel), after=(f&&f.row===row)?f.arr[f.i]:null;
   const r={u:uid(),a,...place(a,after)};
+  if(it.sh){ r.c=it.k==='mel'?st.melC:st.floC; if(it.br) r.b=it.br[it.br.length-1]; }
   st[row].push(r); sel=r.u; commit();
   toast('วาง '+(it.t==='hood'?'ช่องเครื่องดูดควัน':it.n)+' แล้ว ลากเพื่อย้ายได้');
 }
@@ -679,8 +727,8 @@ function switchSeries(id,force){
   const conv=arr=>arr.map(r=>{
     if(HOODS[r.a]) return r;
     const it=ITEMS[r.a];
-    let a=pick(id,it.t,it.w);
-    if(!a&&it.t==='micro') a=pick(id,'box',it.w);
+    let a=pick(id,it.t,it.w,it.h);
+    if(!a&&it.t==='micro') a=pick(id,'box',it.w,it.h);
     if(!a){ dropped++; return null; }
     const nit=ITEMS[a];
     const y = it.up ? Math.max(0, r.y+it.h-nit.h) : r.y;   // keep wall pieces hanging from the same top line
@@ -700,7 +748,11 @@ function fxIcon(f){
   if(f.v==='g') return g('<rect x="3" y="8" width="58" height="32" rx="3" fill="#1E1F21"/>'+[13,32,51].map(cx=>'<circle cx="'+cx+'" cy="24" r="6" fill="#3A3C3F"/><path d="M'+(cx-8)+' 24h16M'+cx+' 16v16" stroke="#555" stroke-width="1.5"/>').join(''));
   return g('<rect x="7" y="6" width="50" height="36" rx="3" fill="#1E1F21"/><circle cx="22" cy="20" r="7" fill="none" stroke="#6E7276" stroke-width="1.6"/><circle cx="43" cy="28" r="6" fill="none" stroke="#6E7276" stroke-width="1.6"/><circle cx="43" cy="14" r="4" fill="none" stroke="#6E7276" stroke-width="1.6"/>');
 }
+function shelfIcon(it,col){ const L=8+it.w/180*48, D=it.k==='mel'?it.d/40*10+4:7, th=it.k==='mel'?3:7;
+  return '<svg width="64" height="46" viewBox="0 0 64 46" aria-hidden="true"><path d="M'+(32-L/2)+' '+(20)+'l'+D+' -'+D*0.6+'h'+L+'l-'+D+' '+D*0.6+'z" fill="'+col+'" stroke="rgba(0,0,0,.2)"/><rect x="'+(32-L/2)+'" y="20" width="'+L+'" height="'+th+'" fill="'+col+'" stroke="rgba(0,0,0,.25)"/>'+(it.br?'<path d="M'+(36-L/2)+' '+(20+th)+'v10l6-10z M'+(26+L/2)+' '+(20+th)+'v10l6-10z" fill="#9AA0A4"/>':'')+'</svg>'; }
 function tile(a,it){
+  if(SHELF[a]){ const col=(it.k==='mel'?MELC[st.melC]||MELC.oak:FLOC[st.floC]||FLOC.white)[1];
+    return '<button class="ti" type="button" data-a="'+a+'"><span class="ph">'+shelfIcon(it,col)+'</span><span class="nm">'+(it.k==='mel'?'ลึก '+it.d+' กว้าง '+it.w:'กว้าง '+it.w)+'</span><span class="mt">'+it.sz+' ซม.'+(it.br?' · แขน '+it.br.join('/'):'')+'</span><span class="plus">+ วาง</span></button>'; }
   const opIcon=t=>t==='win'?'<svg width="54" height="46" viewBox="0 0 54 46" aria-hidden="true"><rect x="6" y="4" width="42" height="38" rx="1" fill="#F4F4F2" stroke="#8A8F94" stroke-width="3"/><rect x="9" y="7" width="36" height="32" fill="#CFE2EC"/><rect x="26" y="7" width="2.5" height="32" fill="#8A8F94"/></svg>'
     :t==='door'?'<svg width="54" height="46" viewBox="0 0 54 46" aria-hidden="true"><rect x="15" y="2" width="24" height="42" rx="1" fill="#C9A27A" stroke="#8C6B4B" stroke-width="2"/><circle cx="34" cy="24" r="1.8" fill="#4A4A4A"/></svg>'
     :'<svg width="54" height="46" viewBox="0 0 54 46" aria-hidden="true"><rect x="3" y="2" width="48" height="42" fill="#F4F4F2" stroke="#7E8489" stroke-width="2.5"/><rect x="6" y="5" width="21" height="36" fill="#CFE2EC"/><rect x="27" y="5" width="21" height="36" fill="#BFD6E3"/><rect x="26" y="5" width="2" height="36" fill="#7E8489"/></svg>';
@@ -717,6 +769,13 @@ function renderTray(){
   $('trayX').innerHTML=Object.keys(HOODS).map(a=>tile(a,HOODS[a])).join('');
   $('trayF').innerHTML=Object.keys(FIX).map(a=>tile(a,FIX[a])).join('');
   $('trayO').innerHTML=Object.keys(OPS).map(a=>tile(a,OPS[a])).join('');
+  const sk=k=>Object.keys(SHELF).filter(a=>SHELF[a].k===k);
+  $('trayMel').innerHTML=sk('mel').map(a=>tile(a,SHELF[a])).join('');
+  $('trayFlo').innerHTML=sk('flo').map(a=>tile(a,SHELF[a])).join('');
+  const cols=(host,P,key)=>{ $(host).innerHTML=Object.entries(P).map(([k2,v])=>'<button type="button" class="shc lab" data-c="'+k2+'" aria-pressed="'+(st[key]===k2)+'"><i style="background:'+v[1]+'"></i>'+v[0]+'</button>').join('');
+    $(host).querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{ st[key]=b.dataset.c; save(); renderTray(); }); };
+  if(!MELC[st.melC]) st.melC='oak'; if(!FLOC[st.floC]) st.floC='white';
+  cols('melCols',MELC,'melC'); cols('floCols',FLOC,'floC');
   document.querySelectorAll('.tray [data-a]').forEach(b=>b.addEventListener('click',()=>add(b.dataset.a)));
   $('presets').innerHTML=PRESETS.map((p,i)=>'<button class="ib" type="button" data-p="'+i+'">'+p.n+(st.layout==='I'?'':' ('+WALLNAME[st.wall]+')')+'</button>').join('')+
     '<button class="ib" type="button" data-full="L">ครัวตัว L ทั้งชุด</button><button class="ib" type="button" data-full="U">ครัวตัว U ทั้งชุด</button>';
@@ -772,14 +831,25 @@ function counts(){
   [...allRefs('up'),...allRefs('lo')].forEach(r=>{ if(!ITEMS[r.a]) return; if(!c[r.a]){c[r.a]=0;order.push(r.a);} c[r.a]++; });
   return order.map(a=>({a,q:c[a]}));
 }
+function accRows(){
+  const m={}, order=[], br={};
+  allRefs('sh').forEach(r=>{ const it=SHELF[r.a]; if(!it) return; const c=shCol(r,it);
+    const key=r.a+'|'+c[0]; if(!m[key]){ m[key]={name:it.n+' · '+c[0],size:it.sz,q:0,draw:'shelf'}; order.push(key); } m[key].q++;
+    if(it.br){ const L=brLen(r,it); br[L]=(br[L]||0)+brQty(it); } });
+  const rows=order.map(k2=>m[k2]);
+  Object.keys(br).sort().forEach(L=>rows.push({name:'แขนรับชั้น '+L+' ซม.',size:L,q:br[L],draw:'bracket'}));
+  return rows;
+}
 function renderList(){
-  const rows=counts(), total=rows.reduce((s,r)=>s+r.q,0);
+  const rows=counts(), acc=accRows(), total=rows.reduce((s,r)=>s+r.q,0)+acc.reduce((s,r)=>s+r.q,0);
   $('cnt').textContent=total;
   const hoods=allRefs('up').filter(r=>HOODS[r.a]);
   const fxRows=Object.keys(FIX).map(k2=>({a:k2,q:allRefs('fx').filter(r=>r.a===k2).length})).filter(r=>r.q);
-  $('list').innerHTML = rows.length ? rows.map(r=>{ const it=ITEMS[r.a]; return '<div class="li"><img src="'+img(r.a)+'" alt=""><div><div class="nm">'+it.n+'</div><div class="mt">Article '+r.a+' · '+serOf(r.a)+' · '+it.sz+' ซม.</div></div><div class="q">×'+r.q+'</div></div>'; }).join('')
+  const accHtml=acc.length?'<div class="h3" style="margin-top:12px">อุปกรณ์เสริม</div>'+acc.map(r=>'<div class="li"><span></span><div><div class="nm">'+r.name+'</div><div class="mt">'+r.size+' ซม.</div></div><div class="q">×'+r.q+'</div></div>').join(''):'';
+  $('list').innerHTML = (rows.length||acc.length||hoods.length||fxRows.length) ? rows.map(r=>{ const it=ITEMS[r.a]; return '<div class="li"><img src="'+img(r.a)+'" alt=""><div><div class="nm">'+it.n+'</div><div class="mt">Article '+r.a+' · '+serOf(r.a)+' · '+it.sz+' ซม.</div></div><div class="q">×'+r.q+'</div></div>'; }).join('')
     + (hoods.length?'<div class="li"><span></span><div><div class="nm">เครื่องดูดควัน</div><div class="mt">กว้าง '+hoods.map(r=>HOODS[r.a].w).join(', ')+' ซม. · เลือกรุ่นกับพนักงาน</div></div><div class="q">×'+hoods.length+'</div></div>':'')
     + fxRows.map(r=>'<div class="li"><span></span><div><div class="nm">'+FIX[r.a].n+'</div><div class="mt">'+FIX[r.a].sz+' ซม. · เลือกรุ่นกับพนักงาน</div></div><div class="q">×'+r.q+'</div></div>').join('')
+    + accHtml
     : '<p class="note">ยังไม่มีสินค้า ไปที่ "เพิ่มชิ้น" เพื่อเริ่มวาง</p>';
 }
 function listText(){
@@ -790,6 +860,7 @@ function listText(){
   rows.forEach((r,i)=>L.push((i+1)+'. Article '+r.a+' '+ITEMS[r.a].n+' ('+serOf(r.a)+') '+ITEMS[r.a].sz+' ซม. × '+r.q));
   const h=allRefs('up').filter(r=>HOODS[r.a]); if(h.length) L.push('- เครื่องดูดควัน กว้าง '+h.map(r=>HOODS[r.a].w).join(', ')+' ซม. × '+h.length);
   Object.keys(FIX).forEach(k2=>{ const q=allRefs('fx').filter(r=>r.a===k2).length; if(q) L.push('- '+FIX[k2].n+' × '+q+' (เลือกรุ่นกับพนักงาน)'); });
+  const acc=accRows(); if(acc.length){ L.push('','อุปกรณ์เสริม'); acc.forEach(r=>L.push('- '+r.name+' '+r.size+' ซม. × '+r.q)); }
   return L.join('\n');
 }
 $('copyBtn').addEventListener('click',()=>{
@@ -801,7 +872,7 @@ let clr=null;
 $('clearBtn').addEventListener('click',()=>{
   const b=$('clearBtn');
   if(!clr){ b.textContent='แตะอีกครั้งเพื่อล้าง'; clr=setTimeout(()=>{clr=null;b.textContent='ล้างครัวทั้งหมด';},2500); return; }
-  clearTimeout(clr); clr=null; b.textContent='ล้างครัวทั้งหมด'; eachWall(()=>{ st.up=[]; st.lo=[]; st.fx=[]; st.op=[]; },WALLS); sel=null; commit();
+  clearTimeout(clr); clr=null; b.textContent='ล้างครัวทั้งหมด'; eachWall(()=>{ st.up=[]; st.lo=[]; st.fx=[]; st.op=[]; st.sh=[]; },WALLS); sel=null; commit();
 });
 
 /* ---------- 3D view ---------- */
@@ -871,6 +942,10 @@ function buildWall(k2,mt){
     if(it.t==='door'){ bx(it.w-2*t,it.h-t,2,r.x+t,r.y,0.5,M3('#C9A27A',.6)); cyl(1.4,4,r.x+it.w-12,r.y+it.h*0.48,3.5,M3('#4A4A4A',.4,.5)); }
     else { bx(it.w-2*t,it.h-2*t,0.6,r.x+t,r.y+t,0.4,glass,false); bx(2.5,it.h-2*t,3,r.x+it.w/2-1.25,r.y+t,0.2,fr); if(r.y>0) bx(it.w-2*t,0.1,0.1,r.x+t,r.y+t,0,fr,false); }
   });
+  st.sh.forEach(r=>{ const it=SHELF[r.a]; if(!it) return; const m=M3(shCol(r,it)[1],.6);
+    bx(it.w,it.h,it.d,r.x,r.y,0,m);
+    if(it.br){ const L=brLen(r,it), bm=M3(L>=30?'#2B2D30':'#E8E8E6',.5,.3);
+      [8,it.w-10].concat(it.w>=120?[it.w/2-1]:[]).forEach(x=>{ bx(1.6,L*0.55,1.6,r.x+x,r.y-L*0.55,0,bm); bx(1.6,1.6,L-2,r.x+x,r.y-1.6,0,bm); }); } });
   let cs=counterSpan();
   const onCounter=r=>cs&&r.y<=PLINTH+3&&r.x>=cs.x0-2&&r.x+item(r.a).w<=cs.x1+2;
   if(cs){
@@ -1000,6 +1075,7 @@ function exportRows(){
   const h=allRefs('up').filter(r=>HOODS[r.a]);
   if(h.length) rows.push({name:'เครื่องดูดควัน (เลือกรุ่นกับพนักงาน)',art:'—',size:h.map(r=>HOODS[r.a].w).join(', '),q:h.length,draw:'hood'});
   Object.keys(FIX).forEach(k2=>{ const q=allRefs('fx').filter(r=>r.a===k2).length; if(q) rows.push({name:FIX[k2].n+' (เลือกรุ่นกับพนักงาน)',art:'—',size:FIX[k2].sz,q,draw:FIX[k2].t}); });
+  accRows().forEach(r=>rows.push({...r,art:'—'}));
   return rows;
 }
 // draw the front elevation in cm space onto a canvas region
@@ -1012,6 +1088,9 @@ async function drawElevation(c,X,Y0,BW,BH,ims){
   c.fillStyle=g; c.fillRect(ox,oy,Wcm*s2,WALLH*s2);
   g=c.createLinearGradient(0,py(6),0,py(0)); g.addColorStop(0,st.floorC); g.addColorStop(1,shade(st.floorC,-.12)); c.fillStyle=g; c.fillRect(ox,py(6),Wcm*s2,6*s2);
   c.fillStyle='rgba(0,0,0,.08)'; c.fillRect(px(0)-1,oy,2,py(6)-oy); c.fillRect(px(st.wallW)-1,oy,2,py(6)-oy);
+  const drawShelves=()=>st.sh.forEach(r=>{ const it=SHELF[r.a]; if(!it) return; const x=px(r.x), y=py(r.y+it.h), w=it.w*s2, h=Math.max(it.h*s2,2), bl=brLen(r,it)*0.55*s2;
+    c.fillStyle='#8A9095'; if(it.br) [8,it.w-10].concat(it.w>=120?[it.w/2-1]:[]).forEach(bx_=>{ c.beginPath(); c.moveTo(px(r.x+bx_),y+h); c.lineTo(px(r.x+bx_)+2*s2,y+h); c.lineTo(px(r.x+bx_)+2*s2,y+h+bl); c.closePath(); c.fill(); c.fillRect(px(r.x+bx_),y+h,1.5*s2,bl); });
+    c.shadowColor='rgba(0,0,0,.25)'; c.shadowBlur=4*s2; c.shadowOffsetY=2*s2; c.fillStyle=shCol(r,it)[1]; c.fillRect(x,y,w,h); c.shadowColor='transparent'; });
   st.op.forEach(r=>{ const it=OPS[r.a], x=px(r.x), y=py(r.y+it.h), w=it.w*s2, h=it.h*s2, t=4*s2;
     if(it.t==='door'){ c.fillStyle='#8C6B4B'; c.fillRect(x,y,w,h); c.fillStyle='#C9A27A'; c.fillRect(x+t,y+t,w-2*t,h-t); c.fillStyle='#4A4A4A'; c.beginPath(); c.arc(x+w-12*s2,y+h*0.52,1.6*s2,0,7); c.fill(); return; }
     c.fillStyle='#F2F2F0'; c.fillRect(x,y,w,h); const gg=c.createLinearGradient(x,y,x+w,y+h); gg.addColorStop(0,'#D9E9F2'); gg.addColorStop(1,'#AFCBDB'); c.fillStyle=gg; c.fillRect(x+t,y+t,w-2*t,h-2*t);
@@ -1050,7 +1129,7 @@ async function drawElevation(c,X,Y0,BW,BH,ims){
     if(im) c.drawImage(im,x,y,w,h); else { c.fillStyle='#ccc'; c.fillRect(x,y,w,h); }
     c.shadowColor='transparent';
   };
-  st.lo.forEach(draw); st.up.forEach(draw); st.fx.forEach(draw);
+  st.lo.forEach(draw); drawShelves(); st.up.forEach(draw); st.fx.forEach(draw);
   c.restore();
   // dimension lines
   const dim=(x0,x1,yy,label)=>{
@@ -1111,7 +1190,7 @@ async function buildSheets(paged){
     c.fillStyle='#14263A'; c.font='500 26px '+FM; c.fillText(String(i+1),M+20,y+58);
     c.fillStyle='#F4F4F2'; rrect(c,M+76,y+10,120,RH-20,8); c.fill();
     if(r.a&&ims[r.a]){ const im=ims[r.a], sc=Math.min(108/im.width,(RH-28)/im.height); c.drawImage(im,M+136-im.width*sc/2,y+RH/2-im.height*sc/2,im.width*sc,im.height*sc); }
-    else { c.fillStyle='#9FA5AA'; c.font='600 20px '+FB; c.textAlign='center'; c.fillText(r.draw==='sink'?'ซิงก์':r.draw==='hob'?'เตา':'ดูดควัน',M+136,y+RH/2+7); c.textAlign='left'; }
+    else { c.fillStyle='#9FA5AA'; c.font='600 20px '+FB; c.textAlign='center'; c.fillText(r.draw==='sink'?'ซิงก์':r.draw==='hob'?'เตา':r.draw==='shelf'?'ชั้นวาง':r.draw==='bracket'?'แขน':'ดูดควัน',M+136,y+RH/2+7); c.textAlign='left'; }
     c.fillStyle='#14263A'; c.font='500 28px '+FM; c.fillText(r.art,M+220,y+58);
     c.font='600 30px '+FB; c.fillText(r.name,M+460,y+58);
     if(r.ser){ const nw=c.measureText(r.name).width; c.font='500 24px '+FB; c.fillStyle='#8A6A4E'; c.fillText(r.ser,M+460+nw+18,y+58); c.fillStyle='#14263A'; }
@@ -1184,13 +1263,13 @@ async function saveFile(name,blob){
 let busy=false;
 async function busyRun(btn,label,fn){ if(busy) return; busy=true; const t=btn.textContent; btn.textContent=label; btn.disabled=true; try{ await fn(); } catch(e){ toast('สร้างไฟล์ไม่สำเร็จ ลองอีกครั้ง'); } finally{ btn.textContent=t; btn.disabled=false; busy=false; } }
 $('pngBtn').addEventListener('click',()=>busyRun($('pngBtn'),'กำลังสร้างภาพ…',async()=>{
-  if(!counts().length&&!allRefs('fx').length&&!allRefs('up').length){ toast('ยังไม่มีสินค้าในครัว'); return; }
+  if(!counts().length&&!allRefs('fx').length&&!allRefs('up').length&&!allRefs('sh').length){ toast('ยังไม่มีสินค้าในครัว'); return; }
   const [cv]=await buildSheets(false);
   if(true){ await saveFile(fname('png'),await canvasBlob(cv,'image/png')); }
   else { $('pvImg').src=cv.toDataURL('image/png'); $('pv').hidden=false; }
 }));
 $('pdfBtn').addEventListener('click',()=>busyRun($('pdfBtn'),'กำลังสร้าง PDF…',async()=>{
-  if(!counts().length&&!allRefs('fx').length&&!allRefs('up').length){ toast('ยังไม่มีสินค้าในครัว'); return; }
+  if(!counts().length&&!allRefs('fx').length&&!allRefs('up').length&&!allRefs('sh').length){ toast('ยังไม่มีสินค้าในครัว'); return; }
   try{ if(!(window.jspdf&&window.jspdf.jsPDF)) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'); }
   catch(e){ toast('สร้าง PDF ไม่ได้ตอนนี้ ลองบันทึกเป็น PNG แทน'); return; }
   const pages=await buildSheets(true);
@@ -1222,7 +1301,7 @@ function clearCorners(k2){
     if(minX<lim0) dx=lim0-minX;
     if(cz.r&&maxX+dx>w.w-CORNER) dx=(w.w-CORNER)-maxX;
     if(minX+dx<lim0) dx=lim0-minX;
-    if(dx) ['lo','up','fx','op'].forEach(row=>w[row].forEach(r=>{ r.x=Math.round(r.x+dx); }));
+    if(dx) ['lo','up','fx','op','sh'].forEach(row=>w[row].forEach(r=>{ r.x=Math.round(r.x+dx); }));
   }
   if(w.cw>0||lo.length){
     const x0=lo.length?Math.min(...lo.map(r=>r.x))-PIL:w.cx, x1=lo.length?Math.max(...lo.map(r=>r.x+item(r.a).w))+PIL:w.cx+w.cw;
