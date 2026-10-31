@@ -5,21 +5,27 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>แต่งครัวปูน CABIN</title>
 <meta name="description" content="ลองแต่งครัวเคาน์เตอร์ปูนด้วยบานและตู้แขวน CABIN 9 ซีรีส์ วางได้อิสระ ดู 3D และบันทึกแผนครัวพร้อมรายการสินค้าเป็น PNG หรือ PDF">
-<meta name="theme-color" content="#14324D">
+<meta name="theme-color" content="#0755b5">
 <meta property="og:title" content="แต่งครัวปูน CABIN">
 <meta property="og:description" content="ลองแต่งครัวเคาน์เตอร์ปูน วางบานและตู้แขวนได้อิสระ ดู 3D และบันทึกรายการสินค้า">
-<meta property="og:image" content="icons/icon-512.png">
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-<link rel="manifest" href="manifest.webmanifest">
+<meta property="og:image" content="icons/icon-512.png?v=2">
+<link rel="icon" href="favicon.ico?v=2" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=2">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=2">
+<link rel="manifest" href="manifest.webmanifest?v=blue-orange-icon-2">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png?v=2">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120.png?v=2">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152.png?v=2">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167.png?v=2">
+<meta name="msapplication-TileColor" content="#0755b5">
+<meta name="msapplication-TileImage" content="icons/mstile-150.png?v=2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ครัวปูน 3D">
 <meta name="application-name" content="ครัวปูน 3D">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap">
 <style>
 /* Layout: kitchen elevation (the product) on the left, a picking panel on the right; on phones the elevation sticks to the top while the panel scrolls below. */
 :root{
@@ -233,6 +239,7 @@ textarea.fallback{width:100%;min-height:120px;font:12px var(--f-mono);border:1px
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
+<link rel="stylesheet" href="theme-blue-orange.css">
 </head>
 <body>
 <header class="top">
@@ -1068,7 +1075,7 @@ let DL=null;
 (async()=>{ try{ DL=window.claude&&window.claude.use?await window.claude.use('downloads'):null; }catch(e){ DL=null; }
 })();
 const loadImg=src=>new Promise(res=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src=src; });
-const FD="'Anuphan','IBM Plex Sans Thai',system-ui,sans-serif", FB="'IBM Plex Sans Thai','Noto Sans Thai',system-ui,sans-serif", FM="'IBM Plex Mono',ui-monospace,monospace";
+const FD="'Prompt','Noto Sans Thai',system-ui,sans-serif", FB="'Prompt','Noto Sans Thai',system-ui,sans-serif", FM="'Prompt','Noto Sans Thai',system-ui,sans-serif";
 function rrect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
 function exportRows(){
   const rows=counts().map(r=>({a:r.a,name:ITEMS[r.a].n,ser:serOf(r.a),art:r.a,size:ITEMS[r.a].sz,q:r.q,im:img(r.a)}));
@@ -1143,7 +1150,7 @@ async function drawElevation(c,X,Y0,BW,BH,ims){
   return oy+WALLH*s2+(cs?100:50);
 }
 async function buildSheets(paged){
-  try{ await Promise.all([document.fonts.load('700 40px Anuphan'),document.fonts.load('500 30px "IBM Plex Sans Thai"'),document.fonts.load('500 24px "IBM Plex Mono"')]); }catch(e){}
+  try{ await Promise.all([document.fonts.load('700 40px Prompt'),document.fonts.load('600 30px Prompt'),document.fonts.load('500 24px Prompt')]); }catch(e){}
   const ims={}; await Promise.all([...new Set([...allRefs('lo'),...allRefs('up')].map(r=>r.a).filter(a=>ITEMS[a]))].map(async a=>{ ims[a]=await loadImg(img(a)); }));
   const view=st.expView||'both';
   let shot3d=null;
